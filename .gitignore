@@ -1,0 +1,20 @@
+
+
+# TypeScript cache
+*.tsbuildinfo
+
+.VSCodeCounter
+
+.vscode
+.env
+
+package-lock.json
+node_modules
+
+
+*.crt
+*.key
+JWT_SECRET.*
+
+data
+

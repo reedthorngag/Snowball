@@ -1,0 +1,24 @@
+# use a whitelist because its easier
+
+*
+
+!package.json
+!tsconfig.json
+!.npmrc
+!certificate.crt
+!*.key
+!*.pub
+!.env
+
+!backend/package.json
+!backend/tsconfig.json
+
+!backend/mongo-entrypoint
+
+!frontend/package.json
+!frontend/env.d.ts
+!frontend/eslint.config.ts
+!frontend/tsconfig.app.json
+!frontend/tsconfig.json
+!frontend/tsconfig.node.json
+!frontend/vite.config.ts
