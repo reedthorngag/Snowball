@@ -13,7 +13,8 @@
 !backend/package.json
 !backend/tsconfig.json
 
-!backend/mongo-entrypoint
+!backend/mongo-entrypoint/create_user.js
+!backend/mongo-entrypoint/test.sh
 
 !frontend/package.json
 !frontend/env.d.ts

@@ -3,7 +3,7 @@ const DB_ADMIN_USER = "admin";
 const DB_ADMIN_PASSWORD = "Q#o%aA%D(3D$Ip$8";
 
 const DB_USER = "Snowball";
-const DB_PASSWORD = "6ZVMyfG^BB>\fAZV";
+const DB_PASSWORD = "6ZVMyfG^BB>\\fAZV";
 
 let db = connect("mongodb://${DB_ADMIN_USER}:${DB_ADMIN_PASSWORD}@127.0.0.1/admin");
 
