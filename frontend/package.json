@@ -15,8 +15,8 @@
     "lint": "npx eslint . --fix"
   },
   "dependencies": {
+    "npm-run-all2": "^8.0.4",
     "vite": "^7.1.9",
-    "vite-plugin-vue-devtools": "^8.0.2",
     "vue": "^3.5.22",
     "vue-router": "^4.5.1"
   },
@@ -30,6 +30,7 @@
     "eslint": "^9.31.0",
     "eslint-plugin-vue": "~10.3.0",
     "jiti": "^2.4.2",
+    "vite-plugin-vue-devtools": "^8.0.2",
     "nodemon": "^3.1.10",
     "typescript": "~5.8.0",
     "vue-tsc": "^3.0.4"
