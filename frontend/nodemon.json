@@ -2,6 +2,6 @@
     "verbose":true,
     "watch":["src/**/*"],
     "execMap":{
-        "ts": "npx vue --build"
+        "ts": "npm run build"
     }
 }
