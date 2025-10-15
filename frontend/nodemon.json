@@ -1,6 +1,12 @@
 {
     "verbose":true,
-    "watch":["src/**/*"],
+    "legacyWatch": true,
+    "pollingInterval": 4000,
+    "watch":["*.*"],
+    "ignore": [
+        "node_modules/**",
+        "dist/**"
+    ],
     "execMap":{
         "ts": "npm run build"
     }
