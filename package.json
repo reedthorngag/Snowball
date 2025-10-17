@@ -13,11 +13,13 @@
     "frontend-build": "cd frontend && npm run build",
     "backend-build": "cd backend && npm run build",
     "frontend-dev": "cd frontend && npm run dev",
-    "backend-dev": "cd frontend && npm run dev"
+    "backend-dev": "cd backend && npm run dev"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.2",
     "vue": "^3.5.22"
   },
   "devDependencies": {

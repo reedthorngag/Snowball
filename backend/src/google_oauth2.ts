@@ -21,56 +21,56 @@ function initGoogleOauth2(app:Express) {
         // Here you can handle the user profile information returned by Google
         // You can save the user information in a database or use it to authenticate the user
         
-        let user = await prismaClient.loginInfo.findUnique({
-            select: {
-                User: {
-                    select: {
-                        UserID: true,
-                        IsAdmin: true,
-                        IsBanned: true
-                    }
-                }
-            },
-            where: {
-                GoogleID: profile.id,
-                User: {
-                    IsDeleted: false
-                }
-            }
-        });
+        // let user = await prismaClient.loginInfo.findUnique({
+        //     select: {
+        //         User: {
+        //             select: {
+        //                 UserID: true,
+        //                 IsAdmin: true,
+        //                 IsBanned: true
+        //             }
+        //         }
+        //     },
+        //     where: {
+        //         GoogleID: profile.id,
+        //         User: {
+        //             IsDeleted: false
+        //         }
+        //     }
+        // });
 
-        console.log(user);
+        // console.log(user);
 
-        if (!user) {
-            const id = crypto.randomBytes(16).toString('hex');
-            await prismaClient.user.create({
-                data: {
-                    UserID: id,
-                    Bio: ''
-                }
-            });
-            const createdUser = await prismaClient.loginInfo.create({
-                data: {
-                    GoogleID: profile.id,
-                    Email: profile.email,
-                    FirstName: profile.given_name,
-                    UserID: id
-                }
-            });
-            profile['noUserID'] = true;
-            profile['UserID'] = createdUser?.UserID;
-            return done(null, profile);
-        }
+        // if (!user) {
+        //     const id = crypto.randomBytes(16).toString('hex');
+        //     await prismaClient.user.create({
+        //         data: {
+        //             UserID: id,
+        //             Bio: ''
+        //         }
+        //     });
+        //     const createdUser = await prismaClient.loginInfo.create({
+        //         data: {
+        //             GoogleID: profile.id,
+        //             Email: profile.email,
+        //             FirstName: profile.given_name,
+        //             UserID: id
+        //         }
+        //     });
+        //     profile['noUserID'] = true;
+        //     profile['UserID'] = createdUser?.UserID;
+        //     return done(null, profile);
+        // }
         
 
 
-        if (user?.User?.IsBanned) {
-            return done(null, false);
-        }
+        // if (user?.User?.IsBanned) {
+        //     return done(null, false);
+        // }
 
-        profile['isAdmin'] = user.User!.IsAdmin;
-        profile['UserID'] = user.User!.UserID;
-        return done(null,profile);
+        // profile['isAdmin'] = user.User!.IsAdmin;
+        // profile['UserID'] = user.User!.UserID;
+        // return done(null,profile);
     }));
 
     // Redirect the user to Google for authentication

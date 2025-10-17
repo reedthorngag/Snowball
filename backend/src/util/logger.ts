@@ -8,7 +8,7 @@ import {LOG_LEVELS_MAP} from '../constant/logger.js';
 const DATE_LOG_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const ROTATION_LOG_FILE_DATE_PATTERN = 'YYYY-MM-DD';
 const ROTATION_LOG_FILE_NAME = 'application-%DATE%.log';
-const ROTATION_LOG_DIRECTORY = '/app/logs';
+const ROTATION_LOG_DIRECTORY = '../logs';
 
 const {combine, timestamp, colorize, json, simple, printf} = format;
 const {Console} = transports;
