@@ -3,6 +3,7 @@ import fs from 'fs';
 import {Auth,Handler} from '../types/route.js';
 import getErrorPage from './error_pages.js';
 import logger from './logger.js';
+import { generateKeyPair } from 'crypto';
 
 /**
  * the authenticator class which handles everythig related to authentication, such as:
@@ -12,8 +13,8 @@ import logger from './logger.js';
  */
 class Authenticator {
     
-    private privateKey:string = fs.readFileSync('./JWT_SECRET.key','utf8');
-    private publicKey:string = fs.readFileSync('./JWT_SECRET.pub','utf8');
+    private privateKey:string = "";
+    private publicKey:string = "";
 
     private algorithm:jwt.Algorithm = 'RS256';
 
@@ -22,6 +23,27 @@ class Authenticator {
     private currentTokenID = 0;
 
     public constructor() {
+        try {
+            this.privateKey = fs.readFileSync('./JWT_SECRET.key','utf8');
+            this.publicKey = fs.readFileSync('./JWT_SECRET.pub','utf8');
+        } catch (e) {
+            generateKeyPair('rsa', {
+                modulusLength: 4096,
+                publicKeyEncoding: {
+                    type: 'spki',
+                    format: 'pem'
+                },
+                privateKeyEncoding: {
+                    type: 'pkcs8',
+                    format: 'pem',
+                }
+            }, (err, publicKey, privateKey) => {
+                fs.writeFileSync("./JWT_SECRET.key", privateKey);
+                fs.writeFileSync("./JWT_SECRET.pub", privateKey);
+                this.privateKey = privateKey;
+                this.publicKey = publicKey
+            });
+        }
         setInterval(this.removeInvalid.bind(this),1000*60*60*24); // set job to run once a day
     }
 

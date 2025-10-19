@@ -4,6 +4,7 @@ import path from 'path';
 import Logger from './util/logger.js';
 import Route from './types/route.js';
 import fs from 'fs'
+import Authenticator from './util/authenticator.js';
 
 //key index issue with types:so any
 const router:Router = express.Router(); 
@@ -20,7 +21,7 @@ for (const [path,method,auth,handler] of routesList) {
     Logger.info(`Adding route: ${method.toUpperCase().padEnd(4)} /api${path}`);
     try{
         //@ts-ignore
-        router[(method).toLowerCase()](path, authenticator.resolve(auth,async (req:any,res:any) => {
+        router[(method).toLowerCase()](path, global.authenticator.resolve(auth,async (req:any,res:any) => {
             try {
                 res.setHeader('Cache-Control','no-store, no-cache');
                 res.setHeader('Pragma','no-cache');
