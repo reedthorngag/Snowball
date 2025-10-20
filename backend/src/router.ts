@@ -13,7 +13,9 @@ const routesList: Route[] = [];
 Logger.info('Importing routes...');
 
 for (const file of (await glob.glob( './**/*.js',{cwd:"./build/routes"})))
-    routesList.push(...(await import('./routes/'+file)).default);
+    try {
+        routesList.push(...(await import('./routes/'+file)).default);
+    } catch (e) {}
 
 routesList.sort((a:Route,b:Route) => a[0].localeCompare(b[0]));
 
