@@ -74,14 +74,14 @@ function initGoogleOauth2(app:Express) {
     }));
 
     // Redirect the user to Google for authentication
-    app.get(process.env.AUTH_URL!, passport.authenticate('google', {
+    app.get(process.env.GOOGLE_AUTH_URL!, passport.authenticate('google', {
             scope: process.env.SCOPE!.split(','),
             session: false,
             prompt: 'consent'
         }));
 
 
-    app.get(process.env.CALLBACK_URL!, (req:Request,res:Response,next:NextFunction) => passport.authenticate('google', 
+    app.get(process.env.AUTH_CALLBACK_URL!, (req:Request,res:Response,next:NextFunction) => passport.authenticate('google', 
         {session: false},
         function(err:any,profile:any,info:any,status:any) {
             if (!profile) {

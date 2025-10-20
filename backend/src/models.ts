@@ -26,7 +26,7 @@ const CommunitySchema = new Schema({
 
 const PostSchema = new Schema({
     community_id: String,
-    author_id: ObjectId,
+    author_id: String,
     title: String,
     created_at: {type: Date, default: Date.now},
     image: String,

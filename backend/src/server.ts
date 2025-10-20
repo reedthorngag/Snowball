@@ -20,19 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('etag', false);
 
-// add admin protected log directory
-app.get('/logs/*.log', global.authenticator.resolve('admin', (req:any,res:any) => {
-    res.setHeader('Cache-Control','no-store, no-cache');
-    res.setHeader('Pragma','no-cache');
-
-    const file = `/app/logs/${req.params[0]}.log`; // potential for directory traversal (low risk) or other malicious input
-    if (fs.existsSync(file))
-        res.sendFile(file);
-    else
-        res.status(404).send('Log doesn\'t exist!');
-    
-}));
-
 
 initGoogleOauth2(app);
 

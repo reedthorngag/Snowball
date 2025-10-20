@@ -12,40 +12,32 @@ import express from 'express';
 import local_router from './local_routes.js';
 import path from 'path';
 
-var app = express();
+import app from './server.js';
 
 const port: number = 443;
 
 app.use(`/api/${process.env.API_VERSION}`, router);
 
 app.use((req, res, next) => {
-    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.header('Expires', '-1');
-    res.header('Pragma', 'no-cache');
-    res.sendFile(path.resolve('./src/public/index.html'));
+    res.sendFile(path.resolve('/app/frontend/dist/index.html'));
 });
 
 const local_app = express().use('/',local_router);
 
-(async () => {
+if (process.env.ENV === 'PROD') {
+    var privateKey = fs.readFileSync('./privatekey.key' );
+    var certificate = fs.readFileSync('./certificate.crt' );
+    https.createServer({
+        key: privateKey,
+        cert: certificate
+    }, app).listen(port,()=>{
+        Logger.info(`Listening on port ${port}`);
+        http.createServer(local_app).listen(80);
+    });
     
-    if (process.env.ENV === 'PROD') {
-        var privateKey = fs.readFileSync('./privatekey.key' );
-        var certificate = fs.readFileSync('./certificate.crt' );
-        https.createServer({
-            key: privateKey,
-            cert: certificate
-        }, app).listen(port,()=>{
-            
-            Logger.info(`Listening on port ${port}`);
-            http.createServer(local_app).listen(80);
-            
-        });
-        
-    } else {
-        http.createServer(app).listen(port,()=>{
-            Logger.info("Listening on port "+port);
-            http.createServer(local_app).listen(80);
-        });
-    }
-})();
+} else {
+    http.createServer(app).listen(port,()=>{
+        Logger.info("Listening on port "+port);
+        http.createServer(local_app).listen(80);
+    });
+}

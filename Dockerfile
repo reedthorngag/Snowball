@@ -3,14 +3,14 @@ FROM node:24-alpine AS base
 WORKDIR /app/backend
 
 COPY ./backend/package.json .
-RUN npm install --include=dev
-#RUN if [[ ${ENV} == DEV ]] ; then npm install --include=dev ; else npm install ; fi
+#RUN npm install --include=dev
+RUN if [[ ${ENV} == DEV ]] ; then npm install ; else npm install --include=dev ; fi
 
 WORKDIR /app/frontend
 
 COPY ./frontend/package.json .
-RUN npm install --include=dev
-#RUN if [[ ${ENV} == DEV ]] ; then npm install --include=dev ; else npm install ; fi
+#RUN npm install --include=dev
+RUN if [[ ${ENV} == PROD ]] ; then npm install ; else npm install --include=dev ; fi
 
 WORKDIR /app
 

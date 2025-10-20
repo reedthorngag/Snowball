@@ -29,6 +29,13 @@ services:
     environment:
       TSC_NONPOLLING_WATCHER: "0"
       DB_URI: mongodb://${DB_HOST}:${DB_PORT}/${DB_PATH}
+      ENV: ${ENV}
+      API_VERSION: ${API_VERSION}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      SCOPE: ${SCOPE}
+      GOOGLE_AUTH_URL: ${GOOGLE_AUTH_URL}
+      AUTH_CALLBACK_URL: ${AUTH_CALLBACK_URL}
     depends_on:
       db:
         condition: service_healthy
