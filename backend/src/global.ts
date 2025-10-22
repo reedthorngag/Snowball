@@ -9,6 +9,9 @@ declare global {
         Comment: any,
         Vote: any
     };
+    var userCreation: { [key: string]:  { google_id:string, email: string, time: number }};
+    var sessions: { [user_id: string]: { feedPointer: number } } // feedPointer is the latest date time
 }
 
 global.authenticator = new Authenticator();
+

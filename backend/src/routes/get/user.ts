@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 
 const get:Route = ['/users/:user_id', 'GET', 'none', async (req: Request, res: Response) => {
 
-    const user = await global.models.User.findOne({user_id: req.params.user_id});
+    const user = await global.models.User.findOne({user_id: req.params.user_id}).select('-google_id -email -password');
 
     if (!user) {
         res.status(404);

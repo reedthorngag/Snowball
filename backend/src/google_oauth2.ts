@@ -21,6 +21,8 @@ function initGoogleOauth2(app:Express) {
         // Here you can handle the user profile information returned by Google
         // You can save the user information in a database or use it to authenticate the user
         
+        let user = await global.models.User.findOne({ google_id: profile.id, deleted: false }).select(" user_id admin banned");
+
         // let user = await prismaClient.loginInfo.findUnique({
         //     select: {
         //         User: {
@@ -39,38 +41,26 @@ function initGoogleOauth2(app:Express) {
         //     }
         // });
 
-        // console.log(user);
+        console.log(user);
 
-        // if (!user) {
-        //     const id = crypto.randomBytes(16).toString('hex');
-        //     await prismaClient.user.create({
-        //         data: {
-        //             UserID: id,
-        //             Bio: ''
-        //         }
-        //     });
-        //     const createdUser = await prismaClient.loginInfo.create({
-        //         data: {
-        //             GoogleID: profile.id,
-        //             Email: profile.email,
-        //             FirstName: profile.given_name,
-        //             UserID: id
-        //         }
-        //     });
-        //     profile['noUserID'] = true;
-        //     profile['UserID'] = createdUser?.UserID;
-        //     return done(null, profile);
-        // }
+        if (!user) {
+            const id = crypto.randomBytes(16).toString('hex');
+
+            global.userCreation[id] = { google_id: profile.id, email: profile.email, time: Date.now() };
+
+            profile['noUserID'] = true;
+            profile['UserID'] = id;
+            return done(null, profile);
+        }
         
 
-
-        // if (user?.User?.IsBanned) {
-        //     return done(null, false);
-        // }
-
-        // profile['isAdmin'] = user.User!.IsAdmin;
-        // profile['UserID'] = user.User!.UserID;
-        // return done(null,profile);
+        if (user?.banned) {
+            return done(null, false);
+        }
+ 
+        profile['isAdmin'] = user.admin;
+        profile['UserID'] = user.user_id;
+        return done(null,profile);
     }));
 
     // Redirect the user to Google for authentication
@@ -85,7 +75,7 @@ function initGoogleOauth2(app:Express) {
         {session: false},
         function(err:any,profile:any,info:any,status:any) {
             if (!profile) {
-                res.redirect(process.env.FAILURE_REDIRECT+"?error=user%20banned");
+                res.redirect("/?error=user%20banned");
                 return;
             }
 
@@ -93,7 +83,7 @@ function initGoogleOauth2(app:Express) {
                 <html>
                     <script>
                         document.cookie = 'auth=${authenticator.createToken(profile.UserID,profile.isAdmin)}; max-age='+(60*60*24*5)+'; path=/; Samesite=Strict; Secure;';
-                        window.location.href = '${profile.noUserID?'/updateUserID':process.env.SUCCESS_REDIRECT}';
+                        window.location.href = '${profile.noUserID ? '/updateUserID' : '/'}';
                     </script>
                 </html>
             `);
