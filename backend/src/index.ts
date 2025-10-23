@@ -16,6 +16,28 @@ import app from './server.js';
 
 const port: number = 443;
 
+
+setInterval(() => {
+    
+    const now = Date.now();
+    const timeout = 1000*60*60*24;
+
+    for (let id of Object.keys(global.pendingResources)) {
+        if (now - global.pendingResources[id] > timeout) {
+            fs.rmSync('/app/file-store/'+id);
+            delete global.pendingResources[id];
+        }
+    }
+
+    for (let id of Object.keys(global.userCreation)) {
+        if (now - global.userCreation[id].time > timeout) {
+            delete global.userCreation[id];
+        }
+    }
+
+}, 1000/**60*60*24*/);
+
+
 app.use(`/api/${process.env.API_VERSION}`, router);
 
 app.use((req, res, next) => {
