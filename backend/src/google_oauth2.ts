@@ -21,7 +21,7 @@ function initGoogleOauth2(app:Express) {
         // Here you can handle the user profile information returned by Google
         // You can save the user information in a database or use it to authenticate the user
         
-        let user = await global.models.User.findOne({ google_id: profile.id, deleted: false }).select(" user_id admin banned");
+        let user = await global.models.User.findOne({ google_id: profile.id, deleted: false }).select(" user_id admin banned").exec();
 
         // let user = await prismaClient.loginInfo.findUnique({
         //     select: {
@@ -83,7 +83,7 @@ function initGoogleOauth2(app:Express) {
                 <html>
                     <script>
                         document.cookie = 'auth=${authenticator.createToken(profile.UserID,profile.isAdmin)}; max-age='+(60*60*24*5)+'; path=/; Samesite=Strict; Secure;';
-                        window.location.href = '${profile.noUserID ? '/updateUserID' : '/'}';
+                        window.location.href = '${profile.noUserID ? '/setUserID' : '/'}';
                     </script>
                 </html>
             `);

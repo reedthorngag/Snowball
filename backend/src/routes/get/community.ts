@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 
 const get:Route = ['/communities/:community_id', 'GET', 'none', async (req: Request, res: Response) => {
 
-    const community = await global.models.Community.findOne({community_id: req.params.community_id});
+    const community = await global.models.Community.findOne({community_id: req.params.community_id}).exe();
 
     if (!community) {
         res.status(404);

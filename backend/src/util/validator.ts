@@ -1,6 +1,6 @@
 
 
-function validate(obj: {[key:string]: string}, field: string, required: boolean, minLen: number, maxLen: number, regex?: string): string | undefined {
+function validate(obj: {[key:string]: string}, field: string, required: boolean, minLen: number, maxLen: number, regex?: RegExp): string | undefined {
 
     const value = obj['field'];
 
@@ -16,9 +16,7 @@ function validate(obj: {[key:string]: string}, field: string, required: boolean,
 
     if (!regex) return;
 
-    const r = new RegExp(regex);
-
-    if (!r.test(value)) return field+' value invalid';
+    if (!regex.test(value)) return field+' value invalid';
 
 }
 

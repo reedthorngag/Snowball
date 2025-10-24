@@ -3,8 +3,10 @@ import Route from "../../types/route.js";
 import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 import validate from "../../util/validator.js";
+import fs from 'fs';
+import path from "path";
 
-const create:Route = ['/post', 'POST', 'none', async (req: Request, res: Response) => {
+const create:Route = ['/posts', 'POST', 'none', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
@@ -15,16 +17,61 @@ const create:Route = ['/post', 'POST', 'none', async (req: Request, res: Respons
     // @ts-ignore
     post.author_id = req.auth.userID;
 
-    let v = validate(req.body,'community_id', true, 3, 32);
-    if (v){
-        res.status(422).send('{"error":"'+v+'"}');
+    let t = validate(req.body,'community_id', true, 3, 32);
+    if (t){
+        res.status(422).send('{"error":"'+t+'"}');
         return;
     }
     post.community_id = req.body.community_id;
+ 
+    t = validate(req.body, 'title', true, 1, 48);
+    if (t){
+        res.status(422).send('{"error":"'+t+'"}');
+        return;
+    }
+    post.title = req.body.title
 
+    t = validate(req.body, 'body', false, 1, 500);
+    if (t){
+        res.status(422).send('{"error":"'+t+'"}');
+        return;
+    }
+    if (req.body.body)
+        post.body = req.body.body
 
+    if (req.body.image) {
+        let r = /^[a-zA-Z0-9]+$/;
+        if (!r.test(req.body.image)) {
+            res.status(422).send('{"error":"Please provide the resource ID for the image"}');
+            return;
+        }
+        if (!fs.existsSync('/app/file-store/'+req.body.image)) {
+            res.status(422).send('{"error":"Provided resource ID doesn\'t exist"}');
+            return;
+        }
+        post.image = req.body.image
+    }
 
-    {community_id: "hi", author_id: "hello", title: "test", body: "hello world"});
+    if (req.body.video) {
+        if (req.body.image) {
+            res.status(422).send('{"error":"Post already has an image attached"}');
+            return;
+        }
+
+        let r = /^[a-zA-Z0-9]+$/;
+        if (!r.test(req.body.video)) {
+            res.status(422).send('{"error":"Please provide the resource ID for the image"}');
+            return;
+        }
+
+        if (!fs.existsSync('/app/file-store/'+req.body.video)) {
+            res.status(422).send('{"error":"Provided resource ID doesn\'t exist"}');
+            return;
+        }
+
+        post.video = req.body.video
+    }
+
     res.send(JSON.stringify(await post.save()));
 }];
 

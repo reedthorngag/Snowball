@@ -25,7 +25,7 @@ const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Respon
         res.status(422).send('{"error":"invalid email"}');
         return;
 
-    } else if (global.models.User.findOne({ user_id: req.body.name })) {
+    } else if (global.models.User.findOne({ user_id: req.body.name }).exec()) {
         res.status(422).send('{"error":"email already in use"}');
         return;
     }
@@ -44,12 +44,14 @@ const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Respon
         return;
     }
 
-    if (global.models.User.findOne({ google_id: user.google_id })) {
+    if (global.models.User.findOne({ google_id: user.google_id }).exec()) {
         res.status(422).send('{"error":"account already exists"}');
+        return;
     }
 
-    if (global.models.User.findOne({ user_id: req.body.name })) {
+    if (global.models.User.findOne({ user_id: req.body.name }).exec()) {
         res.status(422).send('{"error":"user already exists"}');
+        return;
     }
 
     delete global.userCreation[req.params.id];

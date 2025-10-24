@@ -14,7 +14,7 @@ const get:Route = ['/search', 'GET', 'none', async (req: Request, res: Response)
         return;
     }
 
-    const posts = await global.models.Post.find({$text: {$search: req.query.s}});
+    const posts = await global.models.Post.find({$text: {$search: req.query.s}}).exec();
 
     res.send(JSON.stringify(posts));
 }];
