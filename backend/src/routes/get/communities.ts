@@ -6,11 +6,6 @@ const get:Route = ['/communities', 'GET', 'none', async (req: Request, res: Resp
 
     const communities = await global.models.Community.find().sort('-member_count').exec();
 
-    if (!communities) {
-        res.status(404);
-        return;
-    }
-
     res.send(JSON.stringify(communities));
 }];
 

@@ -1,0 +1,38 @@
+import mongoose from "mongoose";
+import Route from "../../types/route.js";
+import logger from "../../util/logger.js";
+import { Request, Response } from "express";
+import validate from "../../util/validator.js";
+import fs from 'fs';
+import path from "path";
+
+const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response) => {
+
+    if (!req.is('application/json')) {
+        res.status(422).send('{"error":"body must be json"}');
+        return;
+    }
+
+    // @ts-ignore
+    const user = new global.models.User.findOne({ user_id: req.auth.userID }).exec();
+    if (!user) {
+        res.status(404);
+        return;
+    }
+ 
+    let t = validate(req.body, 'description', true, 1, 48);
+    if (t){
+        res.status(422).send('{"error":"'+t+'"}');
+        return;
+    }
+    if (req.body.description)
+        user.description = req.body.description;
+
+
+    res.send(JSON.stringify(await user.save()));
+}];
+
+
+export default [
+    create
+];

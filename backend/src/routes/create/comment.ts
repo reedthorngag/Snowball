@@ -6,43 +6,33 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 
-const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res: Response) => {
+const create:Route = ['/posts/:post_id/comments', 'POST', 'none', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
         return;
     }
 
-    const post = new global.models.Post.findOne({ _id: req.params.post_id }).exec();
+    const post = await global.models.Post.findById(req.params.post_id).exec();
     if (!post) {
         res.status(404);
         return;
     }
 
+    const comment = new global.models.Comment();
     // @ts-ignore
-    if (post.author_id != req.auth.userID) {
-        res.status(403);
-        return;
-    }
- 
-    let t = validate(req.body, 'title', false, 1, 48);
-    if (t){
-        res.status(422).send('{"error":"'+t+'"}');
-        return;
-    }
-    if (req.body.title)
-        post.title = req.body.title
+    comment.author_id = req.auth.userID;
+    comment.post_id = req.params.post_id;
 
-    t = validate(req.body, 'body', false, 1, 500);
+    let t = validate(req.body, 'body', false, 1, 500);
     if (t){
         res.status(422).send('{"error":"'+t+'"}');
         return;
     }
     if (req.body.body)
-        post.body = req.body.body
+        comment.body = req.body.body;
 
-
-    res.send(JSON.stringify(await post.save()));
+    res.send(JSON.stringify(await comment.save()));
 }];
 
 

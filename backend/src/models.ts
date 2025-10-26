@@ -7,6 +7,7 @@ const UserSchema = new Schema({
     google_id: String,
     email: String,
     password: String,
+    description: String,
     admin: {type: Boolean, default: false},
     communities: [String],
     mod_of: [String],
@@ -44,20 +45,19 @@ const PostSchema = new Schema({
 
 const CommentSchema = new Schema({
     post_id: ObjectId,
-    author_id: ObjectId,
+    author_id: String,
     body: String,
-    reply_to: String,
+    reply_to: ObjectId,
     replies: [String],
     created_at: {type: Date, default: Date.now},
     edited: {type: Boolean, default: false},
     deleted: {type: Boolean, default: false},
     deleted_by: String,
-    upvotes: {type: Number, default: 0},
-    downvotes: {type: Number, default: 0},
+    score: {type: Number, default: 0}
 });
 
 const VoteSchema = new Schema({
-    user_id: ObjectId,
+    user_id: String,
     post_id: ObjectId,
     comment_id: ObjectId,
     date: {type: Date, default: Date.now, expires: 20 * 24 * 60 * 60},

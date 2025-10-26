@@ -3,6 +3,7 @@ import Route from "../../types/route.js";
 import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
+import validate from "../../util/validator.js";
 
 const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Response) => {
     
@@ -62,6 +63,14 @@ const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Respon
         email: req.body.email || user.email,
         password: req.body.password ? bcrypt.hashSync(req.body.password, 12) : undefined
     });
+
+    let t = validate(req.body, 'description', false, 0, 150);
+    if (t) {
+        res.status(422).send('{"error":"'+t+'"}');
+        return;
+    }
+    a.description = req.body.description;
+
     res.send(JSON.stringify(await a.save()));
 }];
 

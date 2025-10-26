@@ -25,13 +25,13 @@ for (const [path,method,auth,handler] of routesList) {
         //@ts-ignore
         router[(method).toLowerCase()](path, global.authenticator.resolve(auth,async (req:any,res:any) => {
             try {
-                res.setHeader('Cache-Control','no-store, no-cache');
-                res.setHeader('Pragma','no-cache');
                 await handler(req,res);
             } catch (e) {
                 try {
                     res.status(500).send('Internal server error.');
-                } catch (err) {}
+                } catch (err) {
+                    Logger.error(`Error while handling error:\n${err}\nOriginal error:\n`);
+                }
                 Logger.error(`Route: ${method.toUpperCase().padEnd(4)} ${path}  Error:`);
                 Logger.error(e);
             }

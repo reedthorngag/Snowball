@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 
 const get:Route = ['/search', 'GET', 'none', async (req: Request, res: Response) => {
 
-    if (req.query.s?.length) {
+    if (!req.query.s?.length) {
         res.status(422).send('{"error":"no search term provided"}');
         return;
     }
@@ -14,7 +14,7 @@ const get:Route = ['/search', 'GET', 'none', async (req: Request, res: Response)
         return;
     }
 
-    const posts = await global.models.Post.find({$text: {$search: req.query.s}}).exec();
+    const posts = await global.models.Post.find({$text: {$search: req.query.s}}).limit(30).exec();
 
     res.send(JSON.stringify(posts));
 }];
