@@ -13,7 +13,7 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
         return;
     }
 
-    const post = await global.models.Comment.findOne({ _id: req.params.post_id }).exec();
+    const post = await global.models.Post.findOne({ _id: req.params.post_id }).exec();
     if (!post) {
         res.status(404);
         return;

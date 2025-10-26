@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import Route from "../../types/route.js";
 import logger from "../../util/logger.js";
 import { Request, Response } from "express";
+import { get_post } from "../../util/cache.js";
 
 const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'none', async (req: Request, res: Response) => {
 
@@ -31,7 +32,10 @@ const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'none', a
             return;
     }
 
-    if (!get_post)
+    if (!get_post(req.params.post)) {
+        res.status(404).send('{"error":"Post not found"}');
+        return;
+    }
 
     // @ts-ignore
     let vote = await global.models.Vote.findOne({ user_id: req.auth.userID, post_id: req.params.post_id, comment_id: req.params.comment_id }).exec();

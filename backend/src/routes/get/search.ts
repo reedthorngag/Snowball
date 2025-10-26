@@ -14,7 +14,7 @@ const get:Route = ['/search', 'GET', 'none', async (req: Request, res: Response)
         return;
     }
 
-    const posts = await global.models.Comment.find({$text: {$search: req.query.s}}).limit(30).exec();
+    const posts = await global.models.Post.find({$text: {$search: req.query.s}}).limit(30).exec();
 
     res.send(JSON.stringify(posts));
 }];

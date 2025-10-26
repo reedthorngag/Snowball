@@ -46,9 +46,9 @@ const get:Route = ['/posts/:post_id/vote', 'PUT', 'none', async (req: Request, r
     }
 
     try {
-        await global.models.Comment.findOneAndUpdate({ _id: req.params.post_id }, { $inc: {score: effective_mod} }).exec();
+        await global.models.Post.findOneAndUpdate({ _id: req.params.post_id }, { $inc: {score: effective_mod} }).exec();
     } catch (e) {
-        res.status(404).send('"error":"comment doesnt exist"}');
+        res.status(404).send('"error":"post doesn\'t exist"}');
     }
 
     await vote.save();

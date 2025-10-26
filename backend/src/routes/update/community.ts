@@ -28,7 +28,7 @@ const create:Route = ['/communities/:community_id', 'POST', 'none', async (req: 
         return;
     }
 
-    if (await global.models.Comment.findOne({ community_id: req.body.name }).exec()) {
+    if (await global.models.Community.findOne({ community_id: req.body.name }).exec()) {
         res.status(422).send('{"error":"A community with that name already exists"}');
         return;
     }
