@@ -6,31 +6,28 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 
-const create:Route = ['/posts/:post_id/comments/:comment_id', 'DELETE', 'none', async (req: Request, res: Response) => {
+const create:Route = ['/communities/:community_id', 'DELETE', 'none', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
         return;
     }
 
-    const comment = await global.models.Comment.findOne({ _id: req.params.comment_id }).exec();
-    if (!comment) {
+    const community = await global.models.Community.findOne({ _id: req.params.community_id }).exec();
+    if (!community) {
         res.status(404);
         return;
     }
 
     // @ts-ignore
-    if (comment.author_id != req.auth.userID) {
+    if (community.owner != req.auth.userID) {
         res.status(403);
         return;
     }
 
-    comment.deleted = true;
-    comment.deleted_by = 'author';
-    comment.author_id = 'Deleted';
-    comment.body = 'Deleted';
+    community.deleted = true;
 
-    res.status(200).send(JSON.stringify(await comment.save()));
+    res.status(200).send(JSON.stringify(await community.save()));
 }];
 
 

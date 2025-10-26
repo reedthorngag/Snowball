@@ -57,7 +57,7 @@ const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Respon
 
     delete global.userCreation[req.params.id];
 
-    const a = new global.models.User({ 
+    const a = new global.models.User({
         user_id: req.body.name, 
         google_id: user.google_id, 
         email: req.body.email || user.email,

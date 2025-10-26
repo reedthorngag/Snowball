@@ -10,12 +10,19 @@ declare global {
         Vote: any
     };
     var userCreation: { [key: string]:  { google_id:string, email: string, time: number }};
-    var sessions: { [user_id: string]: { feedPointer: number } } // feedPointer is the latest date time
-    var pendingResources: { [key: string]: number }
+    var sessions: { [user_id: string]: { feedPointer: number } }; // feedPointer is the latest date time
+    var pendingResources: { [key: string]: number };
+    var cache: { 
+        users:          {[key:string]: {last_access: number, value: any}},
+        communities:    {[key:string]: {last_access: number, value: any}},
+        posts:          {[key:string]: {last_access: number, value: any}},
+        comments:       {[key:string]: {last_access: number, value: any}},
+    }
 }
 
 global.authenticator = new Authenticator();
 global.userCreation = {};
 global.sessions = {};
 global.pendingResources = {};
+global.cache = { users: {}, communities: {}, posts: {}, comments: {}};
 

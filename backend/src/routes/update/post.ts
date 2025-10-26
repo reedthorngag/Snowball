@@ -13,7 +13,7 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
         return;
     }
 
-    const post = new global.models.Post.findOne({ _id: req.params.post_id }).exec();
+    const post = await global.models.Comment.findOne({ _id: req.params.post_id }).exec();
     if (!post) {
         res.status(404);
         return;
@@ -41,6 +41,8 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
     if (req.body.body)
         post.body = req.body.body
 
+    post.edited = true;
+    post.last_edit = Date.now();
 
     res.send(JSON.stringify(await post.save()));
 }];

@@ -14,7 +14,7 @@ const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response
     }
 
     // @ts-ignore
-    const user = new global.models.User.findOne({ user_id: req.auth.userID }).exec();
+    const user = await global.models.User.findOne({ user_id: req.auth.userID }).exec();
     if (!user) {
         res.status(404);
         return;
