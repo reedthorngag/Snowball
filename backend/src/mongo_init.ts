@@ -21,8 +21,8 @@ models.VoteSchema.index({ user_id: 1, post_id: 1, comment_id: 1 });
 
 global.models = {
     User: mongoose.model("User", models.UserSchema),
-    Comment: mongoose.model("Community", models.CommunitySchema),
-    Comment: mongoose.model("Post", models.PostSchema),
+    Community: mongoose.model("Community", models.CommunitySchema),
+    Post: mongoose.model("Post", models.PostSchema),
     Comment: mongoose.model("Comment", models.CommentSchema),
     Vote: mongoose.model("Vote", models.VoteSchema)
 }

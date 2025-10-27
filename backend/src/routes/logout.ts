@@ -6,7 +6,14 @@ const logout:Route = ['/logout', 'GET', 'required', async (req: Request, res: Re
 
     global.authenticator.invalidate(req.cookies.auth);
 
-    res.redirect('/');
+    res.send(`
+        <html>
+            <script>
+                document.cookie = 'auth=null; max-age=-1; path=/auth/google/callback;'
+                window.location.href = '/';
+            </script>
+        </html>
+    `);
 }];
 
 

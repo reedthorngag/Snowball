@@ -49,7 +49,7 @@ function initGoogleOauth2(app:Express) {
             global.userCreation[id] = { google_id: profile.id, email: profile.email, time: Date.now() };
 
             profile['noUserID'] = true;
-            profile['UserID'] = id;
+            profile['tmpID'] = id;
             return done(null, profile);
         }
         
@@ -82,8 +82,11 @@ function initGoogleOauth2(app:Express) {
             res.send(`
                 <html>
                     <script>
-                        document.cookie = 'auth=${authenticator.createToken(profile.UserID,profile.isAdmin)}; max-age='+(60*60*24*5)+'; path=/; Samesite=Strict; Secure;';
-                        window.location.href = '${profile.noUserID ? '/setUserID' : '/'}';
+                        ${profile.noUserID ? 
+                            `document.cookie = 'auth=${profile.tmpID}; max-age='+(60*60*24*5)+'; path=/; Samesite=Strict; Secure;';` :
+                            `document.cookie = 'auth=${authenticator.createToken(profile.UserID,profile.isAdmin)}; max-age='+(60*60*24*5)+'; path=/; Samesite=Strict; Secure;';`
+                        }
+                        window.location.href = '${profile.noUserID ? '/newuser' : '/'}';
                     </script>
                 </html>
             `);
