@@ -5,15 +5,17 @@ import { Request, Response } from "express";
 import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
+import { get_post } from "../../util/cache.js";
 
-const create:Route = ['/posts/:post_id', 'DELETE', 'none', async (req: Request, res: Response) => {
+const del:Route = ['/posts/:post_id', 'DELETE', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
         return;
     }
 
-    const post = await global.models.Comment.findOne({ _id: req.params.post_id }).exec();
+    const post = await get_post(req.params.post_id);
+    // const post = await global.models.Post.findOne({ _id: req.params.post_id }).exec();
     if (!post) {
         res.status(404);
         return;
@@ -34,10 +36,15 @@ const create:Route = ['/posts/:post_id', 'DELETE', 'none', async (req: Request, 
     post.image = '';
     post.video = '';
 
-    res.status(200).send(JSON.stringify(await post.save()));
+    const updated = await post.save();
+
+    if (global.cache.posts[req.params.post_id])
+        global.cache.posts[req.params.post_id].value = updated;
+
+    res.status(200);
 }];
 
 
 export default [
-    create
+    del
 ];

@@ -3,19 +3,24 @@ import Route from "../../types/route.js";
 import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 import validate from "../../util/validator.js";
-import fs from 'fs';
-import path from "path";
+import { get_post } from "../../util/cache.js";
 
-const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'none', async (req: Request, res: Response) => {
+const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
         return;
     }
 
-    const post = await global.models.Comment.findById(req.params.post_id).exec();
+    const post = await get_post(req.params.post_id);
+    //const post = await global.models.Comment.findById(req.params.post_id).exec();
     if (!post) {
-        res.status(404);
+        res.status(404).send('{"error":"Post doesn\'t exist"}');
+        return;
+    }
+
+    if (!post.value.deleted) {
+        res.status(404).send('{"error":"Post deleted"}');
         return;
     }
 

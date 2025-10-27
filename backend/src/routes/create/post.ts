@@ -5,26 +5,33 @@ import { Request, Response } from "express";
 import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
+import { get_community } from "../../util/cache.js";
 
-const create:Route = ['/posts', 'POST', 'none', async (req: Request, res: Response) => {
+const create:Route = ['/communities/:community_id/posts', 'POST', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
         return;
     }
 
+    const community = await get_community(req.params.community_id);
+
+    if (!community) {
+        res.status(404).send('{"error":"Community doesn\'t exist"}');
+        return;
+    }
+
+    if (!community.value.deleted) {
+        res.status(404).send('{"error":"Community deleted"}');
+        return;
+    }
+
     const post = new global.models.Post();
     // @ts-ignore
     post.author_id = req.auth.userID;
-
-    let t = validate(req.body,'community_id', true, 3, 32);
-    if (t){
-        res.status(422).send('{"error":"'+t+'"}');
-        return;
-    }
-    post.community_id = req.body.community_id;
+    post.community_id = req.params.community_id
  
-    t = validate(req.body, 'title', true, 1, 48);
+    let t = validate(req.body, 'title', true, 1, 48);
     if (t){
         res.status(422).send('{"error":"'+t+'"}');
         return;

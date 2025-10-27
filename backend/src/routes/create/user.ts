@@ -38,7 +38,7 @@ const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Respon
         return;
     }
 
-    const user = global.userCreation[req.params.id];
+    const user = global.userCreation[req.query.id as string];
 
     if (!user) {
         res.status(422).send('{"error":"invalid id"}');

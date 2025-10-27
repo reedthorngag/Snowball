@@ -6,7 +6,7 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 
-const create:Route = ['/communities', 'POST', 'none', async (req: Request, res: Response) => {
+const create:Route = ['/communities', 'POST', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');

@@ -6,7 +6,7 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 
-const create:Route = ['/posts/:post_id/comments/:comment_id', 'DELETE', 'none', async (req: Request, res: Response) => {
+const del:Route = ['/posts/:post_id/comments/:comment_id', 'DELETE', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
@@ -30,10 +30,12 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'DELETE', 'none', 
     comment.author_id = 'Deleted';
     comment.body = 'Deleted';
 
-    res.status(200).send(JSON.stringify(await comment.save()));
+    await comment.save()
+
+    res.status(200);
 }];
 
 
 export default [
-    create
+    del
 ];

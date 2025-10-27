@@ -28,8 +28,14 @@ const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response
     if (req.body.description)
         user.description = req.body.description;
 
+    const updated = await user.save();
 
-    res.send(JSON.stringify(await user.save()));
+    // @ts-expect-error
+    if (global.cache.users[req.auth.userID])
+        // @ts-expect-error
+        global.cache.users[req.auth.userID].value = updated;
+
+    res.status(200).send();
 }];
 
 

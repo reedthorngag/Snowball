@@ -4,7 +4,7 @@ import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 import { get_post } from "../../util/cache.js";
 
-const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'none', async (req: Request, res: Response) => {
+const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');

@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
+import { get_post } from "../../util/cache.js";
 
 const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res: Response) => {
 
@@ -13,7 +14,8 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
         return;
     }
 
-    const post = await global.models.Post.findOne({ _id: req.params.post_id }).exec();
+    const post = await get_post(req.params.post_id);
+    //const post = await global.models.Post.findOne({ _id: req.params.post_id }).exec();
     if (!post) {
         res.status(404);
         return;
@@ -44,7 +46,12 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
     post.edited = true;
     post.last_edit = Date.now();
 
-    res.send(JSON.stringify(await post.save()));
+    const updated = await post.save();
+
+    if (global.cache.posts[req.params.post_id])
+        global.cache.posts[req.params.post_id].value = updated;
+
+    res.status(200);
 }];
 
 
