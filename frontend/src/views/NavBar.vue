@@ -1,7 +1,12 @@
+<script setup lang="ts">
+import logo from '@/assets/logo.bmp';
+import Login from '@/views/Login.vue';
+</script>
+
 <template>
     <header>
         <div class="left">
-            <img class="logo-img" src="logo.bmp">
+            <img class="logo-img" :src="logo">
             <div class="logo"> Snowball</div>
         </div>
         <div class="center">
@@ -12,15 +17,16 @@
             <button class="login">Log In</button>
         </div>
   </header>
+  <Login />
 </template>
 
-<style>
+<style scoped>
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 3.5vh;
+    height: 5.5vh;
     padding: 12px 24px;
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
@@ -42,10 +48,10 @@ header {
 }
 
 header .center .search {
-    width: 300px;
-    padding: 8px 12px;
+    width: 20vw;
+    padding: 2.5% 4%;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 1vh;
 }
 
 .signup {
@@ -85,4 +91,5 @@ header .left {
 header .right button {
     margin-left: 10px;
 }
+
 </style>

@@ -2,9 +2,8 @@
     "verbose":true,
     "legacyWatch": true,
     "pollingInterval": 4000,
-    "watch":["*.*"],
+    "watch":["src/**/*.*"],
     "ignore": [
-        "node_modules/**",
         "dist/**"
     ],
     "execMap":{
