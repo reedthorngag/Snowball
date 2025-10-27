@@ -21,7 +21,7 @@ const create:Route = ['/posts/:post_id/comments', 'POST', 'required', async (req
         return;
     }
 
-    if (!post.value.deleted) {
+    if (!post.deleted) {
         res.status(404).send('{"error":"Post deleted"}');
         return;
     }

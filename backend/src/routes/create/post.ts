@@ -21,7 +21,7 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
         return;
     }
 
-    if (!community.value.deleted) {
+    if (!community.deleted) {
         res.status(404).send('{"error":"Community deleted"}');
         return;
     }

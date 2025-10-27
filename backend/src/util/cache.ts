@@ -1,7 +1,5 @@
 
 
-
-
 export async function get_user(user_id: string) {
 
     let user = cache.users[user_id];
