@@ -5,11 +5,18 @@
   --border-color: #e5e7eb;
   --title-primary: ;
   --title-secondary: #6b7280;
-  --text: #1a1a1a;
   --foreground-hover: #e3f2fd;
+
+  --text-dark: #111827;
+  --text: #333;
+  --text-lighter: #4b5563;
+  --text-light: #6b7280;
   
   --primary-color: #2398f5;
   --secondary-color: #1976d2;
+  --primary-muted: #90caf9;
+
+  --accent-shadow-color: #45d4ff60;
 
   --border-radius: 1.3vmin;
   --border-radius-smaller: 0.8vmin;

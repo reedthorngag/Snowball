@@ -1,6 +1,6 @@
 
 <template>
-    <div class="post">
+    <div class="content-container">
         <div class="vote">
             <button class="up">▲</button>
             <div class="score">3</div>
@@ -39,17 +39,6 @@ export default {
 
 <style scoped>
 
-.post {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    gap: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    transition: box-shadow 0.2s;
-}
-
 .post:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
@@ -59,7 +48,7 @@ export default {
     flex-direction: column;
     align-items: center;
     font-size: 1.2rem;
-    color: #90caf9;
+    color: var(--primary-color);
     width: 4%;
 }
 
@@ -72,13 +61,13 @@ export default {
 }
 
 .vote .up:hover, .vote .downvote:hover {
-    color: #1976d2;
+    color: var(--secondary-color);
 }
 
 .vote .score {
     margin: 0 0;
     font-weight: 600;
-    color: #333;
+    color: var(--text);
 }
 
 .post .body {
@@ -87,31 +76,31 @@ export default {
 
 .post .body .meta {
     font-size: 0.85rem;
-    color: #6b7280;
-    margin-bottom: 6px;
+    color: var(--text-light);
+    margin-bottom: 1vh;
 }
 
 .post .body .meta a {
     text-decoration: none;
-    color: #2196f3;
+    color: var(--primary-color);
 }
 
 .post .body .title {
     font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 6px;
-    color: #111827;
+    margin-bottom: 1vh;
+    color: var(--text-dark);
 }
 
 .post .body .text {
     font-size: 1rem;
-    color: #333;
-    margin-bottom: 12px;
+    color: var(--text);
+    margin-bottom: 1.5vh;
 }
 
 .post .body .footer {
     font-size: 0.9rem;
-    color: #4b5563;
+    color: var(--text-lighter);
 }
 
 </style>

@@ -43,8 +43,9 @@ header {
     align-items: center;
     height: 5.5vh;
     padding: 1vh 1vw;
-    background: var(--foreground-color);
+    background: var(--foreground);
     border-bottom: var(--border-width) solid var(--border-color);
+    box-shadow: 0 0.1vh 0.1vh var(--accent-shadow-color);
     position: sticky;
     top: 0;
     z-index: 10;

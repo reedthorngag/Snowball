@@ -66,12 +66,12 @@ export default {
     padding: 0.8vh 0.8vw;
     border-radius: var(--border-radius-small);
     text-decoration: none;
-    color: var(--text);
+    color: var(--text-dark);
     transition: background 0.2s;
 }
 
 .sidebar a:hover {
     background: var(--foreground-hover);
-    color: var(--link-hover);
+    color: var(--primary-color);
 }
 </style>
