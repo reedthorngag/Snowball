@@ -21,7 +21,7 @@ const create:Route = ['/posts/:post_id/comments', 'POST', 'required', async (req
         return;
     }
 
-    if (!post.deleted) {
+    if (post.deleted) {
         res.status(404).send('{"error":"Post deleted"}');
         return;
     }
@@ -38,6 +38,8 @@ const create:Route = ['/posts/:post_id/comments', 'POST', 'required', async (req
     }
     if (req.body.body)
         comment.body = req.body.body;
+
+    await global.models.Post.findOneAndUpdate({ _id: req.params.post_id }, { $inc: { num_comments: 1 } });
 
     res.send(JSON.stringify(await comment.save()));
 }];

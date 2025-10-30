@@ -13,7 +13,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'PUT', 'required',
         return;
     }
 
-    const comment = await global.models.Comment.findOne({ _id: req.params.comment_id }).exec();
+    const comment = await global.models.Comment.findOne({ _id: req.params.comment_id, deleted: false }).exec();
     if (!comment) {
         res.status(404);
         return;

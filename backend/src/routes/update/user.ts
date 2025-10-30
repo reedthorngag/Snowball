@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
+import { get_user } from "../../util/cache.js";
 
 const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response) => {
 
@@ -14,7 +15,8 @@ const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response
     }
 
     // @ts-ignore
-    const user = await global.models.User.findOne({ user_id: req.auth.userID }).exec();
+    const user = await get_user(req.auth.userID);
+    // const user = await global.models.User.findOne({ user_id: req.auth.userID }).exec();
     if (!user) {
         res.status(404);
         return;
