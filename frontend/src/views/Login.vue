@@ -12,9 +12,13 @@
 
 <script lang="ts">
 export default {
+    emits: ['error', 'close'],
     methods: {
+        onError(arg: object) {
+            this.$emit('error', arg)
+        },
         close() {
-            this.$emit('closeLogin');
+            this.$emit('close');
         }
     }
 }
@@ -24,6 +28,7 @@ export default {
 
 .overlay {
     position: fixed;
+    z-index: 11;
     top: 0;
     left: 0;
     height: 100vh;

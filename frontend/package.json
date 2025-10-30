@@ -17,6 +17,8 @@
     "lint": "run-s lint:*"
   },
   "dependencies": {
+    "@types/axios": "^0.9.36",
+    "axios": "^1.13.1",
     "nodemon": "^3.1.10",
     "pinia": "^3.0.3",
     "vue": "^3.5.22",

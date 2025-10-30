@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import logo from '@/assets/logo.bmp';
 import Login from '@/views/Login.vue';
+
+const showLogin = ref(false);
 </script>
 
 <template>
@@ -14,11 +17,23 @@ import Login from '@/views/Login.vue';
         </div>
         <div class="right">
             <button class="signup">Sign Up</button>
-            <button class="login">Log In</button>
+            <button class="login" @click="showLogin = true">Log In</button>
         </div>
   </header>
-  <Login />
+  <Login v-if="showLogin" @close="showLogin = false" @error="onError"/>
 </template>
+
+<script lang="ts">
+export default {
+    emits: ['error'],
+    methods: {
+        onError(arg: object) {
+            this.$emit('error', arg)
+        }
+    }
+}
+
+</script>
 
 <style scoped>
 
@@ -27,9 +42,9 @@ header {
     justify-content: space-between;
     align-items: center;
     height: 5.5vh;
-    padding: 12px 24px;
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 1vh 1vw;
+    background: var(--foreground-color);
+    border-bottom: var(--border-width) solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -39,7 +54,7 @@ header {
     display: inline-block;
     font-weight: 700;
     font-size: 1.4rem;
-    color: #2196f3;
+    color: var(--primary-color);
 }
 
 .logo-img {
@@ -50,16 +65,16 @@ header {
 header .center .search {
     width: 20vw;
     padding: 2.5% 4%;
-    border: 1px solid #ccc;
-    border-radius: 1vh;
+    border: var(--border-width) solid var(--input-border-color);
+    border-radius: var(--border-radius-smaller);
 }
 
 .signup {
     background: transparent;
-    color: #2196f3;
-    border: 1px solid #2196f3;
-    padding: 8px 16px;
-    border-radius: 8px;
+    color: var(--primary-color);
+    border: var(--border-width) solid var(--primary-color);
+    padding: 1vh 1vw;
+    border-radius: var(--border-radius-smaller);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
@@ -69,27 +84,27 @@ header .center .search {
 }
 
 .login {
-    background: #2196f3;
-    color: white;
+    background: var(--primary-color);
+    color: var(--foreground);
     border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
+    padding: 1vh 1.2vw;
+    border-radius: var(--border-radius-smaller);
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .login:hover {
-    background: #1976d2;
+    background: var(--secondary-color);
 }
 
 header .left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5vw;
 }
 
 header .right button {
-    margin-left: 10px;
+    margin-left: 0.8vw;
 }
 
 </style>

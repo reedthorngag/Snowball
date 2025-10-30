@@ -21,6 +21,22 @@
     </div class="post">
 </template>
 
+<script lang="ts">
+export default {
+    props: {
+        post: Object
+    },
+
+    emits: ['error'],
+    methods: {
+        onError(arg: object) {
+            this.$emit('error', arg)
+        }
+    }
+}
+
+</script>
+
 <style scoped>
 
 .post {
