@@ -56,7 +56,7 @@ export default {
 .sidebar-list .title {
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--title-secondary);
+    color: var(--text-light);
     margin-bottom: 1.5vh;
     display: block;
 }

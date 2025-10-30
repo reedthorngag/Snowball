@@ -68,6 +68,7 @@ header .center .search {
     padding: 2.5% 4%;
     border: var(--border-width) solid var(--input-border-color);
     border-radius: var(--border-radius-smaller);
+    background: var(--foreground);
 }
 
 .signup {
