@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
+import sanitize from "../../util/sanitizer.js";
 
 const create:Route = ['/posts/:post_id/comments/:comment_id', 'PUT', 'required', async (req: Request, res: Response) => {
 
@@ -30,7 +31,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'PUT', 'required',
         res.status(422).send('{"error":"'+t+'"}');
         return;
     }
-    comment.body = req.body.body;
+    comment.body = sanitize(req.body.body, true);
 
     comment.edited = true;
     comment.last_edit = Date.now();

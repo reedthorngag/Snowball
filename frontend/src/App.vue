@@ -34,7 +34,7 @@ export default {
 
 .layout {
     display: grid;
-    grid-template-columns: 1fr 12vw;
+    grid-template-columns: 1fr 18vw;
     max-width: 90vw;
     margin: 2vh auto;
     padding: 0 1.5vw;

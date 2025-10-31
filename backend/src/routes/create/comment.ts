@@ -6,6 +6,7 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 import { get_post } from "../../util/cache.js";
+import sanitize from "../../util/sanitizer.js";
 
 const create:Route = ['/posts/:post_id/comments', 'POST', 'required', async (req: Request, res: Response) => {
 
@@ -37,7 +38,7 @@ const create:Route = ['/posts/:post_id/comments', 'POST', 'required', async (req
         return;
     }
     if (req.body.body)
-        comment.body = req.body.body;
+        comment.body = sanitize(req.body.body, true);
 
     await global.models.Post.findOneAndUpdate({ _id: req.params.post_id }, { $inc: { num_comments: 1 } });
 

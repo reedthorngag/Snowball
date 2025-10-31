@@ -82,7 +82,7 @@ header .center .search {
 }
 
 .signup:hover {
-    background: #e3f2fd;
+    background: var(--foreground-hover);
 }
 
 .login {

@@ -4,6 +4,7 @@ import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 import validate from "../../util/validator.js";
 import { get_post } from "../../util/cache.js";
+import sanitize from "../../util/sanitizer.js";
 
 const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'required', async (req: Request, res: Response) => {
 
@@ -43,7 +44,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'required'
         return;
     }
     if (req.body.body)
-        comment.body = req.body.body;
+        comment.body = sanitize(req.body.body, true);
 
     const reply = await comment.save();
     

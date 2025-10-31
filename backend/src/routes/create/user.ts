@@ -4,6 +4,7 @@ import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
 import validate from "../../util/validator.js";
+import sanitize from "../../util/sanitizer.js";
 
 const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Response) => {
     
@@ -58,9 +59,9 @@ const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Respon
     delete global.userCreation[req.params.id];
 
     const a = new global.models.User({
-        user_id: req.body.name, 
+        user_id: sanitize(req.body.name), 
         google_id: user.google_id, 
-        email: req.body.email || user.email,
+        email: sanitize(req.body.email || user.email || ''),
         password: req.body.password ? bcrypt.hashSync(req.body.password, 12) : undefined
     });
 
@@ -69,7 +70,7 @@ const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Respon
         res.status(422).send('{"error":"'+t+'"}');
         return;
     }
-    a.description = req.body.description;
+    a.description = sanitize(req.body.description, true);
 
     res.send(JSON.stringify(await a.save()));
 }];

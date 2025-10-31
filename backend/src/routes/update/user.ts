@@ -6,6 +6,7 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 import { get_user } from "../../util/cache.js";
+import sanitize from "../../util/sanitizer.js";
 
 const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response) => {
 
@@ -28,7 +29,7 @@ const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response
         return;
     }
     if (req.body.description)
-        user.description = req.body.description;
+        user.description = sanitize(req.body.description, true);
 
     const updated = await user.save();
 

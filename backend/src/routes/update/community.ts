@@ -6,6 +6,7 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 import { get_community } from "../../util/cache.js";
+import sanitize from "../../util/sanitizer.js";
 
 const create:Route = ['/communities/:community_id', 'PUT', 'required', async (req: Request, res: Response) => {
 
@@ -32,7 +33,7 @@ const create:Route = ['/communities/:community_id', 'PUT', 'required', async (re
         res.status(422).send('{"error":"'+t+'"}');
         return;
     }
-    community.description = req.body.description;
+    community.description = sanitize(req.body.description, true);
 
     const updated = await community.save();
 

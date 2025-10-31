@@ -6,6 +6,7 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 import { get_post } from "../../util/cache.js";
+import sanitize from "../../util/sanitizer.js";
 
 const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res: Response) => {
 
@@ -41,7 +42,7 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
         return;
     }
     if (req.body.body)
-        post.body = req.body.body
+        post.body = sanitize(req.body.body, true);
 
     post.edited = true;
     post.last_edit = Date.now();

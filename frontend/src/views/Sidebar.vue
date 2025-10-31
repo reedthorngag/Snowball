@@ -6,10 +6,13 @@ import axios from 'axios';
 
 <template>
     <div class="sidebar">
+        <span class="title">Communities</span>
+        <RouterLink v-if="!loggedIn" to="/communities/create">
+            <Button class="create-community">Create new</Button>
+        </RouterLink>
         <div class="sidebar-list">
-            <span class="title">Communities</span>
-            <p v-if="(communities.data as string | null)?.length === 0">No communities found</p>
-            <a v-for="community in communities.data" :href="'/communities/'+community">
+            <p v-if="(communities as string | null)?.length === 0">No communities found</p>
+            <a v-for="community in communities" :href="'/communities/'+community">
                 {{community}}
             </a>
         </div>
@@ -21,9 +24,8 @@ import axios from 'axios';
 export default {
     data() {
         return  {
-            communities: {
-                data: null
-            }
+            communities: null,
+            loggedIn: this.loggedIn
         }
     },
     mounted: async function () {
@@ -32,7 +34,7 @@ export default {
             this.$emit('error', data.data);
             return;
         }
-        this.communities.data = data.data;
+        this.communities = data.data;
     },
 
     emits: ['error']
@@ -47,21 +49,43 @@ export default {
     border-radius: var(--border-radius);
     border: var(--border-width) solid var(--border-color);
     height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.sidebar-list {
-    margin-bottom: 18px;
-}
-
-.sidebar-list .title {
-    font-size: 0.85rem;
+.sidebar .title {
+    font-size: 1rem;
     font-weight: 600;
-    color: var(--text-light);
-    margin-bottom: 1.5vh;
+    color: var(--primary-color);
+    margin-bottom: 1vh;
     display: block;
 }
 
-.sidebar a {
+.create-community {
+    background: transparent;
+    color: var(--primary-color);
+    border: var(--border-width) solid var(--primary-color);
+    padding: 0.8vh 1vw;
+    border-radius: var(--border-radius-smaller);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: none;
+}
+
+.create-community:hover {
+    background: var(--foreground-hover);
+}
+
+.sidebar-list {
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+    max-height: 70vh;
+    overflow-y: scroll;
+    color: var(--text);
+}
+
+.sidebar-list a {
     display: block;
     padding: 0.8vh 0.8vw;
     border-radius: var(--border-radius-small);
@@ -70,7 +94,7 @@ export default {
     transition: background 0.2s;
 }
 
-.sidebar a:hover {
+.sidebar-list a:hover {
     background: var(--foreground-hover);
     color: var(--primary-color);
 }

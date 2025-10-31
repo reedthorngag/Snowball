@@ -6,6 +6,7 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 import { get_community } from "../../util/cache.js";
+import sanitize from "../../util/sanitizer.js";
 
 const create:Route = ['/communities/:community_id/posts', 'POST', 'required', async (req: Request, res: Response) => {
 
@@ -36,7 +37,7 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
         res.status(422).send('{"error":"'+t+'"}');
         return;
     }
-    post.title = req.body.title
+    post.title = sanitize(req.body.title, true);
 
     t = validate(req.body, 'body', false, 1, 500);
     if (t){
@@ -44,7 +45,7 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
         return;
     }
     if (req.body.body)
-        post.body = req.body.body
+        post.body = sanitize(req.body.body, true);
 
     if (req.body.image) {
         let r = /^[a-zA-Z0-9]+$/;
@@ -56,7 +57,7 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
             res.status(422).send('{"error":"Provided resource ID doesn\'t exist"}');
             return;
         }
-        post.image = req.body.image
+        post.image = req.body.image;
     }
 
     if (req.body.video) {
@@ -76,7 +77,7 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
             return;
         }
 
-        post.video = req.body.video
+        post.video = req.body.video;
     }
 
     res.send(JSON.stringify(await post.save()));
