@@ -36,7 +36,7 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
     if (req.body.title)
         post.title = req.body.title
 
-    t = validate(req.body, 'body', false, 1, 500);
+    t = validate(req.body, 'body', false, 1, 1500);
     if (t){
         res.status(422).send('{"error":"'+t+'"}');
         return;

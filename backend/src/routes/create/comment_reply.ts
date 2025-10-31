@@ -38,7 +38,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'required'
     comment.post_id = req.params.post_id;
     comment.reply_to = replyTo._id;
 
-    let t = validate(req.body, 'body', false, 1, 500);
+    let t = validate(req.body, 'body', false, 1, 1000);
     if (t){
         res.status(422).send('{"error":"'+t+'"}');
         return;

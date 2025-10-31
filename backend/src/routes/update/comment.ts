@@ -26,7 +26,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'PUT', 'required',
         return;
     }
 
-    let t = validate(req.body,'body', true, 3, 32);
+    let t = validate(req.body,'body', true, 3, 1000);
     if (t){
         res.status(422).send('{"error":"'+t+'"}');
         return;

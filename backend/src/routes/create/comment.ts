@@ -32,7 +32,7 @@ const create:Route = ['/posts/:post_id/comments', 'POST', 'required', async (req
     comment.author_id = req.auth.userID;
     comment.post_id = req.params.post_id;
 
-    let t = validate(req.body, 'body', false, 1, 500);
+    let t = validate(req.body, 'body', false, 1, 1000);
     if (t){
         res.status(422).send('{"error":"'+t+'"}');
         return;

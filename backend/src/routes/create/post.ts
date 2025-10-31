@@ -39,7 +39,7 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
     }
     post.title = sanitize(req.body.title, true);
 
-    t = validate(req.body, 'body', false, 1, 500);
+    t = validate(req.body, 'body', false, 1, 1500);
     if (t){
         res.status(422).send('{"error":"'+t+'"}');
         return;

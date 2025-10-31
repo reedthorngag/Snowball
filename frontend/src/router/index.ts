@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Feed from '@/views/Feed.vue';
+import Post from '@/views/Post.vue';
+import PostCreate from '@/views/PostCreate.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,6 +11,22 @@ const router = createRouter({
       name: 'home',
       component: Feed,
     },
+    {
+      path: '/posts/:post_id',
+      name: 'post',
+      component: Post,
+      props: true
+    },
+    {
+      path: '/posts/create',
+      name: 'create post',
+      component: PostCreate
+    },
+    {
+      path: '/communities/create',
+      name: 'create community',
+      component: PostCreate
+    }
     // {
     //   path: '/about',
     //   name: 'about',

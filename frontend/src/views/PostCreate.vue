@@ -4,36 +4,29 @@ import '../assets/postStyles.css';
 </script>
 
 <template>
-    <div class="content-container" v-if="loaded">
-        <div class="vote">
-            <button class="up" :class="{selected: vote===1}">▲</button>
-            <div class="score">{{ post.score }}</div>
-            <button class="down" :class="{selected: vote===-1}">▼</button>
-        </div>
+    <div class="content-container">
         <div class="body">
-            <div class="meta">
-                <span class="community"><RouterLink class="link" :to="'/communities/'+encodeURIComponent(post.community_id)">{{ post.community_id }}</RouterLink></span>
-                •
-                <span class="author">user: <RouterLink class="link" :to="'/users/'+encodeURIComponent(post.author_id)">{{ post.author_id }}</RouterLink></span>
-                •
-                <span class="time">{{ getTime(post.created_at) }}</span>
+            <div v-if="newPost">
+                <input type="text" id="community" list="communities" placeholder="select community" />
+                <datalist id="communities">
+                    <option v-for="community in communities" :value="community" />
+                </datalist>
             </div>
-            <h2 class="title">{{ post.title }}</h2>
-            <p class="text" style="max-height: 15vh; text-overflow: ellipsis;">{{ post.body }}</p>
-            <img :src="'/resources/'+post.image" />
-            <div class="footer">💬 {{ post.num_comments }}</div>
+
+            <input type="text" id="title" placeholder="post title" :value="post.title"/>
+            <input type="textarea" id="body" placeholder="post body" :value="post.body"/>
+
+            <form id="resource-upload" enctype="multipart/form-data" method="post">
+                <input type="file" name=""
+            </form>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import axios from 'axios';
-import { RouterLink } from 'vue-router';
 
 export default {
-    props: [
-        'post_id'
-    ],
     data() {
         return {
             post: {
@@ -50,7 +43,11 @@ export default {
             },
             comments: [],
             loaded: false,
-            vote: 0
+            vote: 0,
+            loggedIn: this.loggedIn,
+            currUser: this.currUser,
+            newPost: true,
+            communities: []
         };
     },
 
@@ -103,26 +100,55 @@ export default {
                 return years + ' year'+((years>1) ? 's' : '') + 'ago';
             }
             return 'Unknown time';
+        },
+
+        validatePost() {
+
         }
     },
 
     async mounted() {
-        console.log(this.post_id)
-        const post = await axios.get('/api/v1/posts/'+encodeURIComponent(this.post_id));
-        if (post.status != 200) {
-            this.$emit('error', post.data);
+        if (!this.loggedIn) {
+            this.$router.push('/login');
             return;
         }
-        this.post = post.data;
+        const post = await axios.get('/api/v1/posts/'+encodeURIComponent(this.$route.path.substring(this.$route.path.lastIndexOf('/'))));
+        if (post.status != 404) {
 
-        const comments = await axios.get('/api/v1/posts/'+encodeURIComponent(this.post_id)+'/comments');
-        if (comments.status != 200) {
-            this.$emit('error', comments.data);
+            if (post.status != 200) {
+                this.$emit('error', post.data);
+                return;
+            }
+            
+            // @ts-ignore
+            if (this.currUser.user_id != post.data.user_id) {
+                this.$emit('error', 'Only the author of a post can edit it');
+                return;
+            }
+            
+            this.post = post.data;
+        }
+
+        const communities = await axios.get('/api/v1/communities');
+        if (communities.status != 200) {
+            this.$emit('error', communities.data);
             return;
         }
-        this.comments = comments.data;
+
+        this.communities = communities.data;
     }
 }
 
 </script>
+
+<style scoped>
+
+input {
+    width: 20vw;
+    padding: 2.5% 4%;
+    border: var(--border-width) solid var(--input-border-color);
+    border-radius: var(--border-radius-smaller);
+    background: var(--foreground);
+}
+</style>
 

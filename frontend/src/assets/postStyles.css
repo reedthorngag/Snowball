@@ -1,0 +1,68 @@
+
+.post:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.vote {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    width: 4%;
+}
+
+.vote .up, .vote .down {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: inherit;
+}
+
+.vote .selected {
+    color: var(--primary-bright);
+}
+
+.vote .up:hover, .vote .downvote:hover {
+    color: var(--secondary-color);
+}
+
+.vote .score {
+    margin: 0 0;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.post .body {
+    flex: 1;
+}
+
+.post .body .meta {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 1vh;
+}
+
+.post .body .meta a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+.post .body .title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1vh;
+    color: var(--text-dark);
+}
+
+.post .body .text {
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 1.5vh;
+}
+
+.post .body .footer {
+    font-size: 0.9rem;
+    color: var(--text-lighter);
+}

@@ -2,6 +2,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import Navbar from './views/Navbar.vue';
 import Sidebar from './views/Sidebar.vue';
+import axios from 'axios';
 </script>
 
 <template>
@@ -21,10 +22,27 @@ import Sidebar from './views/Sidebar.vue';
 <script lang="ts">
 
 export default {
+    data() {
+        return {
+            loggedIn: this.loggedIn,
+            currUser: this.currUser
+        };
+    },
     methods: {
         onError(error: object) {
 
         }
+    },
+    async beforeCreate() {
+        const req = await axios.get('/api/v1/user');
+        if (req.status == 200) {
+            // @ts-ignore
+            this.loggedIn = true;
+            this.currUser = req.data;
+            console.log('User is logged in!');
+            console.log(req.data);
+        }
+        console.log('User isn\'t logged in!');
     }
 }
 

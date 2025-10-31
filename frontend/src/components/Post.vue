@@ -1,29 +1,35 @@
+<script setup lang="ts">
+import '../assets/postStyles.css';
+
+</script>
 
 <template>
     <div class="content-container">
         <div class="vote">
-            <button class="up">▲</button>
+            <button class="up" :class="{selected: vote===1}">▲</button>
             <div class="score">{{ post.score }}</div>
-            <button class="down">▼</button>
+            <button class="down" :class="{selected: vote===-1}">▼</button>
         </div>
-        <RouterLink :to="'/posts/'+post._id">
+        <RouterLink :to="'/posts/'+encodeURIComponent(post._id)">
             <div class="body">
                 <div class="meta">
-                    <span class="community"><RouterLink class="link" :to="'/communities/'+post.community_id">{{ post.community_id }}</RouterLink></span>
+                    <span class="community"><RouterLink class="link" :to="'/communities/'+encodeURIComponent(post.community_id)">{{ post.community_id }}</RouterLink></span>
                     •
-                    <span class="author">user: <RouterLink class="link" :to="'/users/'+post.author_id">{{ post.author_id }}</RouterLink></span>
+                    <span class="author">user: <RouterLink class="link" :to="'/users/'+encodeURIComponent(post.author_id)">{{ post.author_id }}</RouterLink></span>
                     •
                     <span class="time">{{ getTime(post.created_at) }}</span>
                 </div>
                 <h2 class="title">{{ post.title }}</h2>
-                <p class="text">Rust is the programming language equivalent of being micromanaged by an overzealous boss who doesn't trust you to do anything without five layers of bureaucracy. Every time you try to write what should be a simple function, the compiler slaps your hand like an angry schoolteacher yelling, "Lifetime annotations!" And heaven forbid you try to do something as daring as shared mutability—boom, welcome to the borrow checker’s dungeon. Yes, memory safety is important, but Rust achieves it by holding developers hostage with arcane syntax and hours of Stack Overflow searches just to move a variable. It’s like building a spaceship when you just needed a bike.</p>
-                <div class="footer">💬 23 comments</div>
+                <p class="text" style="max-height: 15vh; text-overflow: ellipsis;">{{ post.body }}</p>
+                <img :src="'/resources/'+post.image" />
+                <div class="footer">💬 {{ post.num_comments }}</div>
             </div>
         </RouterLink>
     </div>
 </template>
 
 <script lang="ts">
+import axios from 'axios';
 import { RouterLink } from 'vue-router';
 
 export default {
@@ -32,7 +38,8 @@ export default {
     },
     data() {
         return {
-            post: this.post!
+            post: this.post!,
+            vote: 0
         };
     },
 
@@ -42,85 +49,50 @@ export default {
             this.$emit('error', arg)
         },
 
-        upvote() {
-
+        async upvote() {
+            const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
+            if (req.status != 200) {
+                this.$emit('error', req.data);
+                return;
+            }
+            this.vote = 1;
         },
-        downvote() {
-
+        async downvote() {
+            const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
+            if (req.status != 200) {
+                this.$emit('error', req.data);
+                return;
+            }
+            this.vote = -1;
         },
 
-        getTime(time: number) {
-
+        getTime(time: number): string {
+            const diff = Date.now() - time;
+            if (diff < 1000 * 60) return 'A few seconds ago';
+            if (diff < 1000 * 60 * 60) {
+                const mins = Math.round(diff / (1000 * 60));
+                return mins + ' minute'+((mins>1) ? 's' : '') + 'ago';
+            }
+            if (diff < 1000 * 60 * 60 * 24) {
+                const hours = Math.round(diff / (1000 * 60 * 60));
+                return hours + ' hour'+((hours>1) ? 's' : '') + 'ago';
+            }
+            if (diff < 1000 * 60 * 60 * 24 * 30) { // close enough
+                const days = Math.round(diff / (1000 * 60 * 60 * 24));
+                return days + ' day'+((days>1) ? 's' : '') + 'ago';
+            }
+            if (diff < 1000 * 60 * 60 * 24 * 365) {
+                const months = Math.round(diff / (1000 * 60 * 60 * 24 * 30));
+                return months + ' month'+((months>1) ? 's' : '') + 'ago';
+            }
+            if (diff >= 1000 * 60 * 60 * 24 * 365) {
+                const years = Math.round(diff / (1000 * 60 * 60 * 24 * 30 * 365));
+                return years + ' year'+((years>1) ? 's' : '') + 'ago';
+            }
+            return 'Unknown time';
         }
     }
 }
 
 </script>
 
-<style scoped>
-
-.post:hover {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-.vote {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    width: 4%;
-}
-
-.vote .up, .vote .down {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: inherit;
-}
-
-.vote .up:hover, .vote .downvote:hover {
-    color: var(--secondary-color);
-}
-
-.vote .score {
-    margin: 0 0;
-    font-weight: 600;
-    color: var(--text);
-}
-
-.post .body {
-    flex: 1;
-}
-
-.post .body .meta {
-    font-size: 0.85rem;
-    color: var(--text-light);
-    margin-bottom: 1vh;
-}
-
-.post .body .meta a {
-    text-decoration: none;
-    color: var(--primary-color);
-}
-
-.post .body .title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1vh;
-    color: var(--text-dark);
-}
-
-.post .body .text {
-    font-size: 1rem;
-    color: var(--text);
-    margin-bottom: 1.5vh;
-}
-
-.post .body .footer {
-    font-size: 0.9rem;
-    color: var(--text-lighter);
-}
-
-</style>
