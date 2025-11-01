@@ -11,7 +11,9 @@
   --text: #333;
   --text-lighter: #4b5563;
   --text-light: #6b7280;
-  --text-error: #a50000;
+  --text-error: #ff0000;
+
+  --error-color: #910c0c;
   
   --primary-color: #2398f5;
   --secondary-color: #1976d2;

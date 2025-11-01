@@ -24,6 +24,11 @@ const showLogin = ref(false);
 
 <script lang="ts">
 export default {
+    data() {
+        return {
+            showLogin: this.showLogin
+        }
+    },
     emits: ['error'],
     methods: {
     }

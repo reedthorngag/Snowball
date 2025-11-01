@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import GoogleLogin from '@/components/GoogleLogin.vue';
+
 
 
 </script>
@@ -6,6 +8,12 @@
 <template>
     <div class="overlay" @click="close()">
 
+        <div class="container">
+            <div class="title">Login</div>
+            <input type="username" id="username" placeholder="Username or email">
+            <input type="password" id="password" placeholder="password">
+            <GoogleLogin />
+        </div>
     </div>
 
 </template>

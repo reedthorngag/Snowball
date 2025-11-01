@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
 import validate from "../../util/validator.js";
 import sanitize from "../../util/sanitizer.js";
+import { get_user } from "../../util/cache.js";
 
 const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Response) => {
     
@@ -27,7 +28,7 @@ const create:Route = ['/users', 'POST', 'none', async (req: Request, res: Respon
         res.status(422).send('{"error":"invalid email"}');
         return;
 
-    } else if (global.models.User.findOne({ user_id: req.body.name }).exec()) {
+    } else if (await get_user(req.body.name)) {
         res.status(422).send('{"error":"email already in use"}');
         return;
     }

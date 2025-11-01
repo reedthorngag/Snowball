@@ -4,7 +4,6 @@ import path from 'path';
 import Logger from './util/logger.js';
 import Route from './types/route.js';
 import fs from 'fs'
-import Authenticator from './util/authenticator.js';
 
 //key index issue with types:so any
 const router:Router = express.Router(); 
