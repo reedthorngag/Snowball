@@ -12,11 +12,13 @@
 
 <script lang="ts">
 export default {
+    data() {
+        return {
+            error: this.error
+        }
+    },
     emits: ['error', 'close'],
     methods: {
-        onError(arg: object) {
-            this.$emit('error', arg)
-        },
         close() {
             this.$emit('close');
         }

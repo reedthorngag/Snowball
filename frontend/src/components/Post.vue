@@ -52,7 +52,8 @@ export default {
         async upvote() {
             const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
             if (req.status != 200) {
-                this.$emit('error', req.data);
+                // @ts-ignore
+                this.error = req.data;
                 return;
             }
             this.vote = 1;
@@ -60,7 +61,8 @@ export default {
         async downvote() {
             const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
             if (req.status != 200) {
-                this.$emit('error', req.data);
+                // @ts-ignore
+                this.error = req.data;
                 return;
             }
             this.vote = -1;

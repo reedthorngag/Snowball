@@ -50,7 +50,8 @@ export default {
             },
             comments: [],
             loaded: false,
-            vote: 0
+            vote: 0,
+            error: this.error
         };
     },
 
@@ -64,7 +65,7 @@ export default {
             if (!this.loaded) return;
             const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
             if (req.status != 200) {
-                this.$emit('error', req.data);
+                this.error = req.data;
                 return;
             }
             this.vote = 1;
@@ -73,7 +74,7 @@ export default {
             if (!this.loaded) return;
             const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
             if (req.status != 200) {
-                this.$emit('error', req.data);
+                this.error = req.data;
                 return;
             }
             this.vote = -1;
@@ -110,14 +111,14 @@ export default {
         console.log(this.post_id)
         const post = await axios.get('/api/v1/posts/'+encodeURIComponent(this.post_id));
         if (post.status != 200) {
-            this.$emit('error', post.data);
+            this.error = post.data;
             return;
         }
         this.post = post.data;
 
         const comments = await axios.get('/api/v1/posts/'+encodeURIComponent(this.post_id)+'/comments');
         if (comments.status != 200) {
-            this.$emit('error', comments.data);
+            this.error = comments.data;
             return;
         }
         this.comments = comments.data;

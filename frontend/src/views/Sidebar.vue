@@ -31,7 +31,8 @@ export default {
     mounted: async function () {
         const data = await axios.get('/api/v1/communities');
         if (data.status != 200) {
-            this.$emit('error', data.data);
+            // @ts-ignore
+            this.error = data.data;
             return;
         }
         this.communities = data.data;

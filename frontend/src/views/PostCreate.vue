@@ -16,8 +16,11 @@ import '../assets/postStyles.css';
             <input type="text" id="title" placeholder="post title" :value="post.title"/>
             <input type="textarea" id="body" placeholder="post body" :value="post.body"/>
 
-            <form id="resource-upload" enctype="multipart/form-data" method="post">
-                <input type="file" name=""
+            <input type="hidden" name="resource" id="resource">
+
+            <form v-if="newPost" id="resource-upload" enctype="multipart/form-data" method="post">
+                <input type="file" id="resource-input" name="resource">
+                <input type="button" value="upload" @click="uploadResource()">
             </form>
         </div>
     </div>
@@ -47,7 +50,8 @@ export default {
             loggedIn: this.loggedIn,
             currUser: this.currUser,
             newPost: true,
-            communities: []
+            communities: [],
+            error: this.error
         };
     },
 
@@ -61,7 +65,7 @@ export default {
             if (!this.loaded) return;
             const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
             if (req.status != 200) {
-                this.$emit('error', req.data);
+                this.error = req.data;
                 return;
             }
             this.vote = 1;
@@ -70,7 +74,7 @@ export default {
             if (!this.loaded) return;
             const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
             if (req.status != 200) {
-                this.$emit('error', req.data);
+                this.error = req.data;
                 return;
             }
             this.vote = -1;
@@ -104,6 +108,27 @@ export default {
 
         validatePost() {
 
+        },
+
+        async uploadResource() {
+
+            const data = new FormData();
+            // @ts-ignore
+            data.append('resource', document.getElementById('resource-input')!.files[0]);
+
+            const req = await fetch('/resources', {
+                method: 'POST',
+                body: data
+            });
+
+            if (req.status != 200) {
+                // @ts-ignore
+                this.error = req.body;
+                return;
+            }
+
+            // @ts-ignore
+            document.getElementById('resource').value = req.body.id;
         }
     },
 
@@ -116,13 +141,14 @@ export default {
         if (post.status != 404) {
 
             if (post.status != 200) {
-                this.$emit('error', post.data);
+                this.error = post.data;
                 return;
             }
             
             // @ts-ignore
             if (this.currUser.user_id != post.data.user_id) {
-                this.$emit('error', 'Only the author of a post can edit it');
+                // @ts-ignore
+                this.error = 'Only the author of a post can edit it';
                 return;
             }
             
@@ -131,7 +157,7 @@ export default {
 
         const communities = await axios.get('/api/v1/communities');
         if (communities.status != 200) {
-            this.$emit('error', communities.data);
+            this.error = communities.data;
             return;
         }
 

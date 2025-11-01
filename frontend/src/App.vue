@@ -3,20 +3,24 @@ import { RouterLink, RouterView } from 'vue-router'
 import Navbar from './views/Navbar.vue';
 import Sidebar from './views/Sidebar.vue';
 import axios from 'axios';
+import EventBus from './EventBus.ts';
+import Error from './components/Error.vue';
 </script>
 
 <template>
   
-  <Navbar @error="onError"/>
-  
-  <div class="layout">
+    <Error :error="error" />
 
-    <content>
-	    <RouterView @error="onError"/>
-    </content>
+    <Navbar/>
 
-    <Sidebar @error="onError"/>
-  </div>
+    <div class="layout">
+
+        <content>
+            <RouterView/>
+        </content>
+
+        <Sidebar/>
+    </div>
 </template>
 
 <script lang="ts">
@@ -25,13 +29,11 @@ export default {
     data() {
         return {
             loggedIn: this.loggedIn,
-            currUser: this.currUser
+            currUser: this.currUser,
+            error: this.error
         };
     },
     methods: {
-        onError(error: object) {
-
-        }
     },
     async beforeCreate() {
         const req = await axios.get('/api/v1/user');

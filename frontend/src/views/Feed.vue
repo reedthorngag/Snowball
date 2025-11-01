@@ -24,14 +24,15 @@ export default {
 
     data() {
         return {
-            posts: []
+            posts: [],
+            error: this.error
         }
     },
 
     async mounted() {
         const feed = await axios.get('/api/v1/feed');
         if (feed.status != 200) {
-            this.$emit('error', feed.data);
+            this.error = feed.data;
             return;
         }
         this.posts = feed.data;

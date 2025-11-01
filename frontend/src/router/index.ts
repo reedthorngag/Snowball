@@ -26,6 +26,12 @@ const router = createRouter({
       path: '/communities/create',
       name: 'create community',
       component: PostCreate
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Feed,
+      props: { showLogin: true }
     }
     // {
     //   path: '/about',

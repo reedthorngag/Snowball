@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import logo from '@/assets/logo.bmp';
 import Login from '@/views/Login.vue';
-
 const showLogin = ref(false);
 </script>
 
@@ -20,16 +19,13 @@ const showLogin = ref(false);
             <button class="login" @click="showLogin = true">Log In</button>
         </div>
   </header>
-  <Login v-if="showLogin" @close="showLogin = false" @error="onError"/>
+  <Login v-if="showLogin" @close="showLogin = false"/>
 </template>
 
 <script lang="ts">
 export default {
     emits: ['error'],
     methods: {
-        onError(arg: object) {
-            this.$emit('error', arg)
-        }
     }
 }
 

@@ -35,6 +35,7 @@ const upload = multer({ storage: storageEngine, limits: { fileSize: 5_000_000 } 
 
 app.post('resources', upload.single('resource'), (req: Request, res: Response) => {
     global.pendingResources[req.file?.filename!] = Date.now();
+    res.send({id: req.file?.filename!});
 });
 
 
