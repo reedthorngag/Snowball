@@ -21,25 +21,7 @@ function initGoogleOauth2(app:Express) {
         // Here you can handle the user profile information returned by Google
         // You can save the user information in a database or use it to authenticate the user
         
-        let user = await global.models.User.findOne({ google_id: profile.id, deleted: false }).select(" user_id admin banned").exec();
-
-        // let user = await prismaClient.loginInfo.findUnique({
-        //     select: {
-        //         User: {
-        //             select: {
-        //                 UserID: true,
-        //                 IsAdmin: true,
-        //                 IsBanned: true
-        //             }
-        //         }
-        //     },
-        //     where: {
-        //         GoogleID: profile.id,
-        //         User: {
-        //             IsDeleted: false
-        //         }
-        //     }
-        // });
+        let user = await global.models.User.findOne({ google_id: profile.id, deleted: false }).select(" user_id admin banned deleted").exec();
 
         console.log(user);
 
@@ -55,6 +37,10 @@ function initGoogleOauth2(app:Express) {
         
 
         if (user?.banned) {
+            return done(null, false);
+        }
+
+        if (user?.deleted) {
             return done(null, false);
         }
  
@@ -83,10 +69,10 @@ function initGoogleOauth2(app:Express) {
                 <html>
                     <script>
                         ${profile.noUserID ? 
-                            `document.cookie = 'auth=${profile.tmpID}; max-age='+(60*60*24*5)+'; path=/; Samesite=Strict; Secure;';` :
+                            `document.cookie = 'auth=${profile.tmpID}; max-age='+(60*60*3)+'; path=/; Samesite=Strict; Secure;';` :
                             `document.cookie = 'auth=${authenticator.createToken(profile.UserID,profile.isAdmin)}; max-age='+(60*60*24*5)+'; path=/; Samesite=Strict; Secure;';`
                         }
-                        window.location.href = '${profile.noUserID ? '/newuser' : '/'}';
+                        window.location.href = '${profile.noUserID ? '/signup' : '/'}';
                     </script>
                 </html>
             `);

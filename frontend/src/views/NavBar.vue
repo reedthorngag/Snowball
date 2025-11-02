@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import logo from '@/assets/logo.bmp';
 import Login from '@/views/Login.vue';
-const showLogin = ref(false);
+import SignUp from './Signup.vue';
+import darkIcon from '@/assets/dark-icon.png'
+import lightIcon from '@/assets/light-icon.png'
+
 </script>
 
 <template>
@@ -14,23 +17,75 @@ const showLogin = ref(false);
         <div class="center">
             <input type="text" class="search" placeholder="Search..." />
         </div>
-        <div class="right">
-            <button class="signup">Sign Up</button>
-            <button class="login" @click="showLogin = true">Log In</button>
+        <div v-if="!loggedIn" class="right">
+            <RouterLink to="/signup">
+                <button class="signup" @click="showSignup = true">Sign Up</button>
+            </RouterLink>
+            <RouterLink to="/login">
+                <button class="login" @click="showLogin = true">Log In</button>
+            </RouterLink>
+        </div>
+        <div v-else class="right">
+            <button class="theme-toggle" @click="toggleTheme" :aria-label="`Activate ${isDark ? 'light' : 'dark'} mode`">
+                <img v-if="!isDark" :src="darkIcon">
+                <img v-else :src="lightIcon">
+            </button>
+            <RouterLink to="/posts/create">
+                <button class="login">Create post</button>
+            </RouterLink>
+            <RouterLink to="/profile">
+                <button class="signup">Profile</button>
+            </RouterLink>
+            <a href="/api/v1/logout">
+                <button class="signup">Logout</button>
+            </a>
         </div>
   </header>
-  <Login v-if="showLogin" @close="showLogin = false"/>
+  <Login v-if="showLogin" @close="showLogin = false" @showSignup="showLogin = false; showSignup = true"/>
+  <SignUp v-if="showSignup" @close="showSignup = false" @showLogin="showSignup = false; showLogin = true"/>
 </template>
 
 <script lang="ts">
 export default {
     data() {
         return {
-            showLogin: this.showLogin
+            loggedIn: this.loggedIn,
+            isDark: false,
+            showLogin: false,
+            showSignup: false
         }
     },
     emits: ['error'],
     methods: {
+        toggleTheme() {
+            this.isDark = !this.isDark;
+            document.documentElement.setAttribute('data-theme', this.isDark ? 'dark' : 'light');
+            localStorage.setItem('data-theme', this.isDark ? "dark" : "light");
+        }
+    },
+    mounted() {
+        this.isDark = localStorage.getItem("data-theme") == "dark";
+
+        if (window.location.pathname == '/login') {
+            // @ts-ignore
+            this.showLogin = true;
+        }
+        if (window.location.pathname == '/signup') {
+            // @ts-ignore
+            this.showSignup = true;
+        }
+    },
+    watch: {
+        $route() {
+            if (window.location.pathname == '/login') {
+                // @ts-ignore
+                this.showLogin = true;
+            }
+            if (window.location.pathname == '/signup') {
+                // @ts-ignore
+                this.showSignup = true;
+            }
+        }
     }
 }
 
@@ -106,8 +161,38 @@ header .left {
     gap: 0.5vw;
 }
 
+header .right {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 header .right button {
     margin-left: 0.8vw;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--navbar-icon-color, #333);
+    transition: transform 0.2s ease, color 0.2s ease;
+    height: 4vh;
+    border-radius: var(--border-radius-small);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.theme-toggle:hover {
+    background-color: var(--background);
+}
+
+.theme-toggle img {
+    height: 3.5vh;
 }
 
 </style>

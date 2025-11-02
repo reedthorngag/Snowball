@@ -19,11 +19,13 @@ for (const file of (await glob.glob( './**/*.js',{cwd:"./build/routes"})))
 routesList.sort((a:Route,b:Route) => a[0].localeCompare(b[0]));
 
 for (const [path,method,auth,handler] of routesList) {
-    Logger.info(`Adding route: ${method.toUpperCase().padEnd(4)} /api${path}`);
+    Logger.info(`Adding route: ${method.toUpperCase().padEnd(4)} ${path}`);
     try{
         //@ts-ignore
         router[(method).toLowerCase()](path, global.authenticator.resolve(auth,async (req:any,res:any) => {
             try {
+                res.setHeader('Cache-Control','no-store, no-cache');
+                res.setHeader('Pragma','no-cache');
                 await handler(req,res);
             } catch (e) {
                 try {

@@ -32,6 +32,12 @@ const router = createRouter({
       name: 'login',
       component: Feed,
       props: { showLogin: true }
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: Feed,
+      props: { showLogin: true }
     }
     // {
     //   path: '/about',

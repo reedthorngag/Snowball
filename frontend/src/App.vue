@@ -3,16 +3,14 @@ import { RouterLink, RouterView } from 'vue-router'
 import Navbar from './views/Navbar.vue';
 import Sidebar from './views/Sidebar.vue';
 import axios from 'axios';
-import EventBus from './EventBus.ts';
 import Error from './components/Error.vue';
-import { watch } from 'vue';
 
 </script>
 
 <template>
   
     <Transition name="fade">
-        <Error v-if="showError" error="error" />
+        <Error v-if="showError" :error="typeof error == 'string' ? error : {...error}" />
     </Transition>
 
     <Navbar/>
@@ -35,20 +33,38 @@ export default {
             loggedIn: this.loggedIn,
             currUser: this.currUser,
             error: this.error,
-            showError: false
+            showError: false,
+            showSignup: this.showSignup
         };
     },
     methods: {
     },
     async beforeCreate() {
-        const req = await axios.get('/api/v1/user');
+        if(localStorage.getItem("data-theme")){
+            document.documentElement.setAttribute("data-theme", localStorage.getItem("data-theme")!);
+        } else {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            localStorage.setItem("data-theme", prefersDark ? "dark" : "light");
+        }
+
+        let req = await axios.get('/api/v1/user');
         if (req.status == 200) {
             // @ts-ignore
             this.loggedIn = true;
             this.currUser = req.data;
             console.log('User is logged in!');
-            console.log(req.data);
+            return;
         }
+
+        req = await axios.get('/api/v1/auth/valid');
+        if (req.status == 200) {
+            console.log('User has pending account creation');
+            // @ts-ignore
+            this.showSignup = true;
+        }
+
+        document.cookie = 'auth=; max-age=-1; path=/;';
         console.log('User isn\'t logged in!');
     },
     watch: {
@@ -57,7 +73,7 @@ export default {
             setTimeout(() => {
                 if (this.error != newVal) return;
                 this.showError = false;
-            })
+            }, 2500);
         }
     }
 }

@@ -9,7 +9,7 @@ const logout:Route = ['/logout', 'GET', 'required', async (req: Request, res: Re
     res.send(`
         <html>
             <script>
-                document.cookie = 'auth=null; max-age=-1; path=/auth/google/callback;'
+                document.cookie = 'auth=; max-age=-1; path=/;'
                 window.location.href = '/';
             </script>
         </html>

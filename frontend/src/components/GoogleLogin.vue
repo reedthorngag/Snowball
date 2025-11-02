@@ -8,39 +8,20 @@
             alt="Google logo"
             class="google-logo"
             />
-            <span>Sign in with Google</span>
+            <span v-if="!text">Sign in with Google</span>
+            <span v-else>{{ text }}</span>
+
         </button>
     </a>
 </template>
 
-<style scoped>
-/* ---------- THEME VARIABLES ---------- */
-:root {
-  --google-btn-bg: #ffffff;
-  --google-btn-text: #3c4043;
-  --google-btn-border: #dadce0;
-  --google-btn-hover-bg: #f8f9fa;
-  --google-btn-active-bg: #e8eaed;
-  --google-btn-shadow: 0 0.0625rem 0.125rem rgba(60, 64, 67, 0.3),
-                       0 0.0625rem 0.1875rem 0.0625rem rgba(60, 64, 67, 0.15);
-  --google-btn-shadow-hover: 0 0.0625rem 0.1875rem rgba(60, 64, 67, 0.3),
-                             0 0.25rem 0.5rem 0.1875rem rgba(60, 64, 67, 0.15);
+<script lang="ts">
+export default {
+    props: ['text']
 }
+</script>
 
-/* ---------- DARK MODE ---------- */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --google-btn-bg: #202124;
-    --google-btn-text: #e8eaed;
-    --google-btn-border: #5f6368;
-    --google-btn-hover-bg: #292a2d;
-    --google-btn-active-bg: #3c4043;
-    --google-btn-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.4),
-                         0 0.0625rem 0.1875rem 0.0625rem rgba(0, 0, 0, 0.25);
-    --google-btn-shadow-hover: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.5),
-                               0 0.25rem 0.5rem 0.1875rem rgba(0, 0, 0, 0.35);
-  }
-}
+<style scoped>
 
 /* ---------- BUTTON STYLING ---------- */
 .google-btn {
@@ -48,8 +29,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.625rem; /* 10px */
-  padding: 0.625rem 1rem; /* 10px 16px */
-  border-radius: 0.25rem; /* 4px */
+  padding: 0.62rem 1rem; /* 10px 16px */
+  border-radius: 0.3rem; /* 4px */
   border: 1px solid var(--google-btn-border);
   background-color: var(--google-btn-bg);
   color: var(--google-btn-text);

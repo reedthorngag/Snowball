@@ -27,6 +27,7 @@ services:
       - ./backend/src:/app/backend/src
       - ./frontend/src:/app/frontend/src
       - file-store:/app/file-store
+      - ./logs:/app/logs
     environment:
       TSC_NONPOLLING_WATCHER: "0"
       DB_URI: mongodb://${DB_HOST}:${DB_PORT}/${DB_PATH}

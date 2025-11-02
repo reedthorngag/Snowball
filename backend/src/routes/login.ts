@@ -35,7 +35,7 @@ const login:Route = ['/login', 'POST', 'required', async (req: Request, res: Res
         return;
     }
 
-    res.status(200).send();
+    res.status(200).send({cookie: `auth=${global.authenticator.createToken(user.user_id, user.admin)}; max-age='+(60*60*24*5)+'; path=/; Samesite=Strict; Secure;`});
 }];
 
 

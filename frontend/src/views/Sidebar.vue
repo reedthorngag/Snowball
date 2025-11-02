@@ -37,6 +37,8 @@ export default {
         }
         this.communities = data.data;
     },
+    methods: {
+    },
 
     emits: ['error']
 }
@@ -82,7 +84,8 @@ export default {
     margin-top: 2vh;
     margin-bottom: 2vh;
     max-height: 70vh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
     color: var(--text);
 }
 

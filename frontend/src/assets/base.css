@@ -1,5 +1,5 @@
 
-:root {
+[data-theme="dark"] {
   --background: #f9fafb;
   --foreground: #ffffff;
   --border-color: #e5e7eb;
@@ -11,6 +11,7 @@
   --text: #333;
   --text-lighter: #4b5563;
   --text-light: #6b7280;
+  --text-lightest: #888f9c;
   --text-error: #ff0000;
 
   --error-color: #910c0c;
@@ -24,36 +25,51 @@
   --border-radius: 1.3vmin;
   --border-radius-smaller: 0.8vmin;
   --border-radius-small: 0.6vmin;
-  --border-width: 0.2vmin;
+  --border-width: 1px;
 
   --input-border-color: #ccc;
+
+  --google-btn-bg: #ffffff;
+  --google-btn-text: #3c4043;
+  --google-btn-border: #dadce0;
+  --google-btn-hover-bg: #f8f9fa;
+  --google-btn-active-bg: #e8eaed;
+  --google-btn-shadow: 0 0.0625rem 0.125rem rgba(60, 64, 67, 0.3),
+                       0 0.0625rem 0.1875rem 0.0625rem rgba(60, 64, 67, 0.15);
+  --google-btn-shadow-hover: 0 0.0625rem 0.1875rem rgba(60, 64, 67, 0.3),
+                             0 0.25rem 0.5rem 0.1875rem rgba(60, 64, 67, 0.15);
 }
 
-@media (prefers-color-scheme: dark) {
+:root {
+  --background: #1b1d1e;
+  --foreground: #181a1b;
+  --border-color: #363b3d;
+  --title-primary: ;
+  --title-secondary: #6b7280;
+  --foreground-hover: #303335;
 
-}
-@media (max-width: 5000px) {
-  :root {
-    --background: #1b1d1e;
-    --foreground: #181a1b;
-    --border-color: #363b3d;
-    --title-primary: ;
-    --title-secondary: #6b7280;
-    --foreground-hover: #303335;
+  --text-dark: #d6d3cd;
+  --text: #c8c4c0;
+  --text-lighter: #b1aaa0;
+  --text-light: #91897e;
 
-    --text-dark: #d6d3cd;
-    --text: #c8c4c0;
-    --text-lighter: #b1aaa0;
-    --text-light: #91897e;
+  --primary-color: #34a3f6;
+  --secondary-color: #0868b5;
+  --primary-muted: #90caf9;
 
-    --primary-color: #34a3f6;
-    --secondary-color: #0868b5;
-    --primary-muted: #90caf9;
+  --accent-shadow-color: #00c3ff50;
 
-    --accent-shadow-color: #00c3ff50;
+  --input-border-color: #34383b;
 
-    --input-border-color: #34383b;
-  }
+  --google-btn-bg: #202124;
+  --google-btn-text: #e8eaed;
+  --google-btn-border: #5f6368;
+  --google-btn-hover-bg: #292a2d;
+  --google-btn-active-bg: #3c4043;
+  --google-btn-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.4),
+                        0 0.0625rem 0.1875rem 0.0625rem rgba(0, 0, 0, 0.25);
+  --google-btn-shadow-hover: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.5),
+                              0 0.25rem 0.5rem 0.1875rem rgba(0, 0, 0, 0.35);
 }
 
 *,

@@ -31,5 +31,6 @@ const get_curr:Route = ['/user', 'GET', 'required', async (req: Request, res: Re
 
 
 export default [
-    get
+    get,
+    get_curr
 ];
