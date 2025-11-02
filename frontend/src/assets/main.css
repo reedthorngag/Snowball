@@ -24,6 +24,35 @@ body {
     transition: box-shadow 0.2s;
 
     color: var(--text-dark);
+    margin-bottom: 1.5vh;
+}
+
+.button {
+    background: transparent;
+    color: var(--primary-color);
+    border: var(--border-width) solid var(--primary-color);
+    padding: 1vh 1vw;
+    border-radius: var(--border-radius-smaller);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+    background: var(--foreground-hover);
+}
+
+.primary-button {
+    background: var(--primary-color);
+    color: var(--foreground);
+    border: none;
+    padding: 1vh 1.2vw;
+    border-radius: var(--border-radius-smaller);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.primary-button:hover {
+    background: var(--secondary-color);
 }
 
 

@@ -7,13 +7,13 @@ import axios from 'axios';
 <template>
     <div class="sidebar">
         <span class="title">Communities</span>
-        <RouterLink v-if="!loggedIn" to="/communities/create">
+        <RouterLink v-if="loggedIn" to="/communities/create">
             <Button class="create-community">Create new</Button>
         </RouterLink>
         <div class="sidebar-list">
             <p v-if="(communities as string | null)?.length === 0">No communities found</p>
-            <a v-for="community in communities" :href="'/communities/'+community">
-                {{community}}
+            <a v-for="community in communities" :href="'/communities/'+(community as any).community_id">
+                {{(community as any).community_id}}
             </a>
         </div>
     </div class="sidebar">

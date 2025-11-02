@@ -11,7 +11,7 @@ import '../assets/postStyles.css';
             <label for="community">Community</label>
             <input id="community" type="text" v-model="community" placeholder="Search communities..." @focus="showDropdown = true" @focusout="showDropdown = false" @input="searchCommunities()"/>
             <ul v-if="showDropdown" class="dropdown">
-                <li v-for="c in communities" :key="c" @click="community = c">{{ c }}</li>
+                <li v-for="c in communities" :key="(c as any).community_id" @click="community = (c as any).community_id">{{ (c as any).community_id }}</li>
                 <li v-if="communities.length === 0" class="no-result">No results found</li>
             </ul>
         </div>
@@ -23,10 +23,9 @@ import '../assets/postStyles.css';
 
         <div class="form-group">
             <label for="body">Body</label>
-            <textarea id="body" v-model="body" rows="5" placeholder="Write your post..."></textarea>
+            <textarea id="body" v-model="body" rows="7" placeholder="Write your post..."></textarea>
         </div>
 
-        <!-- File Upload -->
         <div class="form-group file-upload">
             <label for="file">Upload optional image</label>
             <input id="file" type="file" name="resource" accept="image/*" @change="fileChanged"/>
@@ -92,7 +91,7 @@ export default {
                 return;
             }
 
-            res = await axios.post('/ap/v1/communities/'+encodeURIComponent(this.community)+'/posts', {
+            res = await axios.post('/api/v1/communities/'+encodeURIComponent(this.community)+'/posts', {
                 title: this.title,
                 body: this.body,
                 image: this.resource ? this.resource : undefined

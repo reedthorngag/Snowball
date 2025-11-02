@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import '../assets/postStyles.css';
+import Comments from '@/views/Comments.vue';
 
 </script>
 
 <template>
-    <div class="content-container" v-if="loaded">
+    <div class="content-container post" v-if="loaded">
         <div class="vote">
             <button class="up" :class="{selected: vote===1}">▲</button>
-            <div class="score">{{ post.score }}</div>
+            <div class="score">{{ post.score || '0' }}</div>
             <button class="down" :class="{selected: vote===-1}">▼</button>
         </div>
         <div class="body">
@@ -19,11 +20,13 @@ import '../assets/postStyles.css';
                 <span class="time">{{ getTime(post.created_at) }}</span>
             </div>
             <h2 class="title">{{ post.title }}</h2>
-            <p class="text" style="max-height: 15vh; text-overflow: ellipsis;">{{ post.body }}</p>
-            <img :src="'/resources/'+post.image" />
-            <div class="footer">💬 {{ post.num_comments }}</div>
+            <div class="centered">
+                <img :src="'/resources/'+post.image" />
+            </div>
+            <p class="text">{{ post.body }}</p>
         </div>
     </div>
+    <Comments v-if="post._id" :post_id="post._id" :num_comments="post.num_comments" />
 </template>
 
 <script lang="ts">
@@ -37,7 +40,7 @@ export default {
     data() {
         return {
             post: {
-                _id: 'undefined',
+                _id: '',
                 score: 0,
                 community_id: 'loading',
                 author_id: 'loading',
@@ -80,28 +83,29 @@ export default {
             this.vote = -1;
         },
 
-        getTime(time: number): string {
-            const diff = Date.now() - time;
+        getTime(time: string | number): string {
+            time = Date.parse(time as string)
+            const diff = Date.now() - time as number;
             if (diff < 1000 * 60) return 'A few seconds ago';
             if (diff < 1000 * 60 * 60) {
                 const mins = Math.round(diff / (1000 * 60));
-                return mins + ' minute'+((mins>1) ? 's' : '') + 'ago';
+                return mins + ' minute'+((mins>1) ? 's' : '') + ' ago';
             }
             if (diff < 1000 * 60 * 60 * 24) {
                 const hours = Math.round(diff / (1000 * 60 * 60));
-                return hours + ' hour'+((hours>1) ? 's' : '') + 'ago';
+                return hours + ' hour'+((hours>1) ? 's' : '') + ' ago';
             }
             if (diff < 1000 * 60 * 60 * 24 * 30) { // close enough
                 const days = Math.round(diff / (1000 * 60 * 60 * 24));
-                return days + ' day'+((days>1) ? 's' : '') + 'ago';
+                return days + ' day'+((days>1) ? 's' : '') + ' ago';
             }
             if (diff < 1000 * 60 * 60 * 24 * 365) {
                 const months = Math.round(diff / (1000 * 60 * 60 * 24 * 30));
-                return months + ' month'+((months>1) ? 's' : '') + 'ago';
+                return months + ' month'+((months>1) ? 's' : '') + ' ago';
             }
             if (diff >= 1000 * 60 * 60 * 24 * 365) {
                 const years = Math.round(diff / (1000 * 60 * 60 * 24 * 30 * 365));
-                return years + ' year'+((years>1) ? 's' : '') + 'ago';
+                return years + ' year'+((years>1) ? 's' : '') + ' ago';
             }
             return 'Unknown time';
         }
@@ -115,6 +119,7 @@ export default {
             return;
         }
         this.post = post.data;
+        this.loaded = true;
 
         const comments = await axios.get('/api/v1/posts/'+encodeURIComponent(this.post_id)+'/comments');
         if (comments.status != 200) {

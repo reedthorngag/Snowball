@@ -15,6 +15,7 @@ const posts = ref([]);
 
 <script lang="ts">
 export default {
+    props: ['community', 'community_id'],
     emits: ['error'],
     methods: {
         onError(arg: object) {
@@ -30,7 +31,7 @@ export default {
     },
 
     async mounted() {
-        const feed = await axios.get('/api/v1/feed');
+        const feed = await axios.get(this.community ? `/api/v1/communities/${this.community_id}/feed` : '/api/v1/feed');
         if (feed.status != 200) {
             this.error = feed.data;
             return;

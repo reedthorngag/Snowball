@@ -25,7 +25,7 @@ export async function get_community(community_id: string) {
     let community = cache.communities[community_id];
 
     if (!community) {
-        const value = await global.models.Community.findOne({user_id: community_id, deleted: false, banned: false}).exec();
+        const value = await global.models.Community.findOne({community_id: community_id, deleted: false, banned: false}).exec();
         if (!value)
             return undefined;
 
@@ -45,7 +45,7 @@ export async function get_post(post_id: string) {
     let post = cache.posts[post_id];
 
     if (!post) {
-        const value = await global.models.Post.findOne({post_id: post_id, deleted: false}).exec();
+        const value = await global.models.Post.findOne({_id: post_id, deleted: false}).exec();
         if (!value)
             return undefined;
 

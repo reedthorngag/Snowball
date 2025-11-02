@@ -27,7 +27,11 @@ for (const [path,method,auth,handler] of routesList) {
                 res.setHeader('Cache-Control','no-store, no-cache');
                 res.setHeader('Pragma','no-cache');
                 await handler(req,res);
-            } catch (e) {
+            } catch (e: any) {
+                if (String(e.reason).startsWith('BSONError:')) {
+                    res.status(404).send();
+                    return;
+                }
                 try {
                     res.status(500).send('Internal server error.');
                 } catch (err) {

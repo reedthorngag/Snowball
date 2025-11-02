@@ -21,6 +21,7 @@ const CommunitySchema = new Schema({
     owner: String,
     mods: [String],
     member_count: Number,
+    description: String,
     birthtime: {type: Date, default: Date.now},
     deleted: {type: Boolean, default: false},
     banned: {type: Boolean, default: false},
