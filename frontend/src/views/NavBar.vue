@@ -74,6 +74,14 @@ export default {
             // @ts-ignore
             this.showSignup = true;
         }
+
+        setTimeout(() => {
+            if ((this.showLogin || this.showSignup) && this.loggedIn) {
+                this.showLogin = false;
+                this.showSignup = false;
+                this.$router.push('/');
+            }
+        }, 500);
     },
     watch: {
         $route() {
@@ -84,6 +92,12 @@ export default {
             if (window.location.pathname == '/signup') {
                 // @ts-ignore
                 this.showSignup = true;
+            }
+
+            if ((this.showLogin || this.showSignup) && this.loggedIn) {
+                this.showLogin = false;
+                this.showSignup = false;
+                this.$router.push('/');
             }
         }
     }

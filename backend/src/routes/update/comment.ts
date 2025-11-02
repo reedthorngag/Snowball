@@ -16,13 +16,13 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'PUT', 'required',
 
     const comment = await global.models.Comment.findOne({ _id: req.params.comment_id, deleted: false }).exec();
     if (!comment) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 
     // @ts-ignore
     if (comment.author_id != req.auth.userID) {
-        res.status(403);
+        res.status(403).send();
         return;
     }
 

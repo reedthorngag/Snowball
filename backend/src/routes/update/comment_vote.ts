@@ -61,7 +61,7 @@ const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'required
     await vote.save();
 
 
-    res.status(200);
+    res.status(200).send();
 }];
 
 

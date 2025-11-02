@@ -9,12 +9,12 @@ const get:Route = ['/search', 'GET', 'none', async (req: Request, res: Response)
         return;
     }
 
-    if (req.query.s!.length! as number > 32) {
+    if (req.query.s!.length! as number > 64) {
         res.status(422).send('{"error":"search term too long"}');
         return;
     }
 
-    const posts = await global.models.Post.find({$text: {$search: req.query.s}}).limit(30).exec();
+    const posts = await global.models.Post.find({$text: {$search: req.query.s}}, {score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}}).limit(30).exec();
 
     res.send(JSON.stringify(posts));
 }];

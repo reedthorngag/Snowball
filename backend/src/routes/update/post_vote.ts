@@ -53,7 +53,7 @@ const get:Route = ['/posts/:post_id/vote', 'PUT', 'none', async (req: Request, r
 
     await vote.save();
 
-    res.status(200);
+    res.status(200).send();
 }];
 
 

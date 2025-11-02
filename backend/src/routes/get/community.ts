@@ -9,7 +9,7 @@ const get:Route = ['/communities/:community_id', 'GET', 'none', async (req: Requ
     // const community = await global.models.Community.findOne({community_id: req.params.community_id}).exec();
 
     if (!community) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 

@@ -17,13 +17,13 @@ const del:Route = ['/communities/:community_id', 'DELETE', 'required', async (re
     const community = await get_community(req.params.community_id);
     // const community = await global.models.Community.findOne({ _id: req.params.community_id }).exec();
     if (!community) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 
     // @ts-ignore
     if (community.owner != req.auth.userID) {
-        res.status(403);
+        res.status(403).send();
         return;
     }
 
@@ -34,7 +34,7 @@ const del:Route = ['/communities/:community_id', 'DELETE', 'required', async (re
     if (global.cache.communities[req.params.community_id])
         global.cache.communities[req.params.community_id].value = updated;
     
-    res.status(200);
+    res.status(200).send();
 }];
 
 

@@ -9,7 +9,7 @@ const get:Route = ['/users/:user_id', 'GET', 'none', async (req: Request, res: R
     // const user = await global.models.User.findOne({user_id: req.params.user_id}).select('-google_id -email -password').exec();
 
     if (!user) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 
@@ -22,7 +22,7 @@ const get_curr:Route = ['/user', 'GET', 'required', async (req: Request, res: Re
     const user = get_user(req.auth.userID)
 
     if (!user) {
-        res.status(401);
+        res.status(401).send();
         return;
     }
 

@@ -27,7 +27,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'required'
 
     const replyTo = await global.models.Comment.findById(req.params.comment_id).exec();
     if (!replyTo) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 

@@ -18,13 +18,13 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
     const post = await get_post(req.params.post_id);
     //const post = await global.models.Post.findOne({ _id: req.params.post_id }).exec();
     if (!post) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 
     // @ts-ignore
     if (post.author_id != req.auth.userID) {
-        res.status(403);
+        res.status(403).send();
         return;
     }
  
@@ -52,7 +52,7 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
     if (global.cache.posts[req.params.post_id])
         global.cache.posts[req.params.post_id].value = updated;
 
-    res.status(200);
+    res.status(200).send();
 }];
 
 

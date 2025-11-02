@@ -15,13 +15,13 @@ const del:Route = ['/posts/:post_id/comments/:comment_id', 'DELETE', 'required',
 
     const comment = await global.models.Comment.findOne({ _id: req.params.comment_id }).exec();
     if (!comment) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 
     // @ts-ignore
     if (comment.author_id != req.auth.userID) {
-        res.status(403);
+        res.status(403).send();
         return;
     }
 
@@ -32,7 +32,7 @@ const del:Route = ['/posts/:post_id/comments/:comment_id', 'DELETE', 'required',
 
     await comment.save()
 
-    res.status(200);
+    res.status(200).send();
 }];
 
 

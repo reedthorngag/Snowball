@@ -24,9 +24,6 @@ app.use(`/api/${process.env.API_VERSION}`, (req:Request, res:Response, next) => 
     router(req, res, next)
 });
 
-app.use('/resources', express.static(path.resolve('/app/file-store'), {etag: true}));
-app.use(express.static(path.resolve('/app/frontend/dist'),{ extensions: ['html'], redirect: false, etag: true }));
-
 
 const storageEngine = multer.diskStorage({
     destination: '/app/file-store',
@@ -37,7 +34,7 @@ const storageEngine = multer.diskStorage({
 });
 const upload = multer({ storage: storageEngine, limits: { fileSize: 5_000_000 } });
 
-app.post('resources', (req: Request, res: Response, next) => {
+app.post('/resources', (req: Request, res: Response, next) => {
     if (!global.authenticator.verify(req.cookies?.auth).valid) {
         res.status(401).send();
         return;
@@ -47,6 +44,10 @@ app.post('resources', (req: Request, res: Response, next) => {
     global.pendingResources[req.file?.filename!] = Date.now();
     res.send({id: req.file?.filename!});
 });
+
+
+app.use('/resources', express.static(path.resolve('/app/file-store'), {etag: true}));
+app.use(express.static(path.resolve('/app/frontend/dist'),{ extensions: ['html'], redirect: false, etag: true }));
 
 
 initGoogleOauth2(app);

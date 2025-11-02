@@ -18,7 +18,7 @@ const create:Route = ['/communities/:community_id', 'PUT', 'required', async (re
     const community = await get_community(req.params.community_id);
     // const community = await global.models.Community.findOne({ community_id: req.params.community_id }).exec();
     if (!community) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 

@@ -4,25 +4,37 @@ import '../assets/postStyles.css';
 </script>
 
 <template>
-    <div class="content-container">
-        <div class="body">
-            <div v-if="newPost">
-                <input type="text" id="community" list="communities" placeholder="select community" />
-                <datalist id="communities">
-                    <option v-for="community in communities" :value="community" />
-                </datalist>
-            </div>
+    <div class="content-container create-post">
+        <h2>Create a New Post</h2>
 
-            <input type="text" id="title" placeholder="post title" :value="post.title"/>
-            <input type="textarea" id="body" placeholder="post body" :value="post.body"/>
-
-            <input type="hidden" name="resource" id="resource">
-
-            <form v-if="newPost" id="resource-upload" enctype="multipart/form-data" method="post">
-                <input type="file" id="resource-input" name="resource">
-                <input type="button" value="upload" @click="uploadResource()">
-            </form>
+        <div class="form-group">
+            <label for="community">Community</label>
+            <input id="community" type="text" v-model="community" placeholder="Search communities..." @focus="showDropdown = true" @focusout="showDropdown = false" @input="searchCommunities()"/>
+            <ul v-if="showDropdown" class="dropdown">
+                <li v-for="c in communities" :key="c" @click="community = c">{{ c }}</li>
+                <li v-if="communities.length === 0" class="no-result">No results found</li>
+            </ul>
         </div>
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input id="title" type="text" v-model="title" placeholder="Enter a post title" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="body">Body</label>
+            <textarea id="body" v-model="body" rows="5" placeholder="Write your post..."></textarea>
+        </div>
+
+        <!-- File Upload -->
+        <div class="form-group file-upload">
+            <label for="file">Upload optional image</label>
+            <input id="file" type="file" name="resource" accept="image/*" @change="fileChanged"/>
+            <button type="button" class="upload-btn" @click="uploadResource()">Upload file</button>
+            <span>{{ uploadedStatus }}</span>
+        </div>
+
+        <button class="post-btn" @click="createPost()">Post</button>
     </div>
 </template>
 
@@ -32,26 +44,25 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            post: {
-                _id: 'undefined',
-                score: 0,
-                community_id: 'loading',
-                author_id: 'loading',
-                created_at: 0,
-                title: 'loading',
-                body: 'loading',
-                image: '',
-                video: '',
-                num_comments: 0
-            },
-            comments: [],
-            loaded: false,
+            post: undefined,
+
+            community: '',
+            title: '',
+            body: '',
+            resource: '',
+            file: undefined,
+            uploadedStatus: 'No file uploaded',
+
+            showDropdown: false,
+            
             vote: 0,
             loggedIn: this.loggedIn,
             currUser: this.currUser,
             newPost: true,
             communities: [],
-            error: this.error
+            error: this.error,
+
+            lastInput: Date.now()
         };
     },
 
@@ -61,60 +72,54 @@ export default {
             this.$emit('error', arg)
         },
 
-        async upvote() {
-            if (!this.loaded) return;
-            const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
-            if (req.status != 200) {
-                this.error = req.data;
+        async createPost() {
+            if (!this.community) {
+                // @ts-ignore
+                this.error = 'Community required';
                 return;
             }
-            this.vote = 1;
-        },
-        async downvote() {
-            if (!this.loaded) return;
-            const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
-            if (req.status != 200) {
-                this.error = req.data;
+
+            let res = await axios.get('/api/v1/communities/'+encodeURIComponent(this.community));
+            if (res.status != 200) {
+                // @ts-ignore
+                this.error = 'Community doesn\'t exist!';
                 return;
             }
-            this.vote = -1;
+
+            if (!this.title) {
+                // @ts-ignore
+                this.error = 'Post title required';
+                return;
+            }
+
+            res = await axios.post('/ap/v1/communities/'+encodeURIComponent(this.community)+'/posts', {
+                title: this.title,
+                body: this.body,
+                image: this.resource ? this.resource : undefined
+            });
+
+            if (res.status != 200) {
+                // @ts-ignore
+                this.error = res.data;
+                return;
+            }
+
+            this.$router.push('/posts/'+encodeURIComponent(res.data._id));
         },
 
-        getTime(time: number): string {
-            const diff = Date.now() - time;
-            if (diff < 1000 * 60) return 'A few seconds ago';
-            if (diff < 1000 * 60 * 60) {
-                const mins = Math.round(diff / (1000 * 60));
-                return mins + ' minute'+((mins>1) ? 's' : '') + 'ago';
-            }
-            if (diff < 1000 * 60 * 60 * 24) {
-                const hours = Math.round(diff / (1000 * 60 * 60));
-                return hours + ' hour'+((hours>1) ? 's' : '') + 'ago';
-            }
-            if (diff < 1000 * 60 * 60 * 24 * 30) { // close enough
-                const days = Math.round(diff / (1000 * 60 * 60 * 24));
-                return days + ' day'+((days>1) ? 's' : '') + 'ago';
-            }
-            if (diff < 1000 * 60 * 60 * 24 * 365) {
-                const months = Math.round(diff / (1000 * 60 * 60 * 24 * 30));
-                return months + ' month'+((months>1) ? 's' : '') + 'ago';
-            }
-            if (diff >= 1000 * 60 * 60 * 24 * 365) {
-                const years = Math.round(diff / (1000 * 60 * 60 * 24 * 30 * 365));
-                return years + ' year'+((years>1) ? 's' : '') + 'ago';
-            }
-            return 'Unknown time';
-        },
-
-        validatePost() {
-
+        fileChanged(event: any) {
+            // @ts-ignore
+            this.file = event.target.files[0];
         },
 
         async uploadResource() {
 
             const data = new FormData();
             // @ts-ignore
-            data.append('resource', document.getElementById('resource-input')!.files[0]);
+            data.append('resource', this.file);
+
+            // @ts-ignore
+            this.uploadedStatus = 'Uploading '+this.file.name+'...'
 
             const req = await fetch('/resources', {
                 method: 'POST',
@@ -124,19 +129,45 @@ export default {
             if (req.status != 200) {
                 // @ts-ignore
                 this.error = req.body;
+                this.uploadedStatus = 'Failed!';
                 return;
             }
 
+            const body = await req.json();
+
             // @ts-ignore
-            document.getElementById('resource').value = req.body.id;
+            this.resource = body.id;
+            // @ts-ignore
+            this.uploadedStatus = 'Uploaded '+this.file.name
+        },
+
+        searchCommunities() {
+            this.lastInput = Date.now();
+            setTimeout(async () => {
+                if (Date.now() - this.lastInput < 450) {
+                    return;
+                }
+                const res = await axios.get('/api/v1/search/communities?s='+encodeURIComponent(this.community));
+                if (res.status != 200) {
+                    this.error = res.data;
+                    return;
+                }
+
+                this.communities = res.data;
+            }, 500);
         }
     },
 
     async mounted() {
-        if (!this.loggedIn) {
-            this.$router.push('/login');
+        setTimeout(() => {
+            if (!this.loggedIn) {
+                this.$router.push('/login');
+                return;
+            }
+        }, 500);
+        if (window.location.pathname == '/posts/create')
             return;
-        }
+        
         const post = await axios.get('/api/v1/posts/'+encodeURIComponent(this.$route.path.substring(this.$route.path.lastIndexOf('/'))));
         if (post.status != 404) {
 
@@ -169,12 +200,119 @@ export default {
 
 <style scoped>
 
-input {
-    width: 20vw;
-    padding: 2.5% 4%;
-    border: var(--border-width) solid var(--input-border-color);
-    border-radius: var(--border-radius-smaller);
-    background: var(--foreground);
+.create-post {
+    color: var(--text);
 }
+
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: block;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--foreground);
+    color: var(--text);
+}
+
+.dropdown {
+  position: absolute;
+  width: 100%;
+  max-height: 10rem;
+  overflow-y: auto;
+  background: var(--background);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-top: 0.25rem;
+  z-index: 10;
+  list-style: none;
+  padding: 0;
+}
+
+.dropdown li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.dropdown li:hover {
+  background-color: var(--foreground-hover);
+}
+
+.no-result {
+  padding: 0.5rem;
+  color: var(--text-light);
+}
+
+.file-upload {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-btn {
+    background: transparent;
+    color: var(--primary-color);
+    border: var(--border-width) solid var(--primary-color);
+    padding: 1vh 1vw;
+    border-radius: var(--border-radius-smaller);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.upload-btn:hover {
+    background-color: var(--primary-muted);
+}
+
+.file-name {
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.preview {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.preview img {
+    max-width: 100%;
+    border-radius: 0.5rem;
+    border: var(--border-width) solid var(--border-color);
+}
+
+.post-btn {
+    display: block;
+    width: 100%;
+    background-color: #2ea84e;
+    color: var(--text);
+    font-size: 1.1rem;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.post-btn:hover {
+    background-color: #288f45;
+}
+
 </style>
 

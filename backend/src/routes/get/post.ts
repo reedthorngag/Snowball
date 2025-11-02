@@ -9,7 +9,7 @@ const get:Route = ['/posts/:post_id', 'GET', 'none', async (req: Request, res: R
     // const post = await global.models.Post.findOne({ _id: req.params.post_id }).exec();
 
     if (!post) {
-        res.status(404);
+        res.status(404).send();
         return;
     }
 
