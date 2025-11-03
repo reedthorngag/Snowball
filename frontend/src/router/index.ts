@@ -10,40 +10,46 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: Feed,
     },
     {
       path: '/posts/:post_id',
-      name: 'post',
+      name: 'Post',
       component: Post,
       props: true
     },
     {
       path: '/communities/:community_id',
-      name: 'community',
+      name: 'Community',
       component: Community,
       props: true
     },
     {
       path: '/posts/create',
-      name: 'create post',
+      name: 'Create post',
       component: PostCreate
     },
     {
+      path: '/communities/:community_id/posts/create',
+      name: 'Create post',
+      component: PostCreate,
+      props: true
+    },
+    {
       path: '/communities/create',
-      name: 'create community',
+      name: 'Create community',
       component: CommunityCreate
     },
     {
       path: '/login',
-      name: 'login',
+      name: 'Login',
       component: Feed,
       props: { showLogin: true }
     },
     {
       path: '/signup',
-      name: 'signup',
+      name: 'Signup',
       component: Feed,
       props: { showLogin: true }
     }

@@ -1,6 +1,5 @@
 <template>
-    <h1>hello</h1>
-    <div class="comment">
+    <div :class="'comment' +parent ? ' content-container' : ''">
 
     <div>
       <textarea v-model="body" rows="3"></textarea>

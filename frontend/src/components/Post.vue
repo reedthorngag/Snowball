@@ -4,13 +4,13 @@ import '../assets/postStyles.css';
 </script>
 
 <template>
-    <div class="content-container">
+    <div class="content-container post">
         <div class="vote">
             <button class="up" :class="{selected: vote===1}">▲</button>
-            <div class="score">{{ post.score }}</div>
+            <div class="score">{{ post.score || '0' }}</div>
             <button class="down" :class="{selected: vote===-1}">▼</button>
         </div>
-        <RouterLink :to="'/posts/'+encodeURIComponent(post._id)">
+        <RouterLink :to="'/posts/'+encodeURIComponent(post._id)" style="text-decoration: none;">
             <div class="body">
                 <div class="meta">
                     <span class="community"><RouterLink class="link" :to="'/communities/'+encodeURIComponent(post.community_id)">{{ post.community_id }}</RouterLink></span>
@@ -20,9 +20,9 @@ import '../assets/postStyles.css';
                     <span class="time">{{ getTime(post.created_at) }}</span>
                 </div>
                 <h2 class="title">{{ post.title }}</h2>
-                <p class="text" style="max-height: 15vh; text-overflow: ellipsis;">{{ post.body }}</p>
-                <img :src="'/resources/'+post.image" />
-                <div class="footer">💬 {{ post.num_comments }}</div>
+                <img v-if="post.image" :src="'/resources/'+post.image" />
+                <p class="text" :style="`max-height: ${post.image ? '2vh' : '15vh'}; text-overflow: ellipsis;`">{{ post.body }}</p>
+                <div class="footer">💬 {{ post.num_comments }} comments</div>
             </div>
         </RouterLink>
     </div>
@@ -41,6 +41,9 @@ export default {
             post: this.post!,
             vote: 0
         };
+    },
+    mounted() {
+        console.log(this.post)
     },
 
     emits: ['error'],
@@ -68,28 +71,29 @@ export default {
             this.vote = -1;
         },
 
-        getTime(time: number): string {
-            const diff = Date.now() - time;
+        getTime(time: string | number): string {
+            time = Date.parse(time as string)
+            const diff = Date.now() - time as number;
             if (diff < 1000 * 60) return 'A few seconds ago';
             if (diff < 1000 * 60 * 60) {
                 const mins = Math.round(diff / (1000 * 60));
-                return mins + ' minute'+((mins>1) ? 's' : '') + 'ago';
+                return mins + ' minute'+((mins>1) ? 's' : '') + ' ago';
             }
             if (diff < 1000 * 60 * 60 * 24) {
                 const hours = Math.round(diff / (1000 * 60 * 60));
-                return hours + ' hour'+((hours>1) ? 's' : '') + 'ago';
+                return hours + ' hour'+((hours>1) ? 's' : '') + ' ago';
             }
             if (diff < 1000 * 60 * 60 * 24 * 30) { // close enough
                 const days = Math.round(diff / (1000 * 60 * 60 * 24));
-                return days + ' day'+((days>1) ? 's' : '') + 'ago';
+                return days + ' day'+((days>1) ? 's' : '') + ' ago';
             }
             if (diff < 1000 * 60 * 60 * 24 * 365) {
                 const months = Math.round(diff / (1000 * 60 * 60 * 24 * 30));
-                return months + ' month'+((months>1) ? 's' : '') + 'ago';
+                return months + ' month'+((months>1) ? 's' : '') + ' ago';
             }
             if (diff >= 1000 * 60 * 60 * 24 * 365) {
                 const years = Math.round(diff / (1000 * 60 * 60 * 24 * 30 * 365));
-                return years + ' year'+((years>1) ? 's' : '') + 'ago';
+                return years + ' year'+((years>1) ? 's' : '') + ' ago';
             }
             return 'Unknown time';
         }

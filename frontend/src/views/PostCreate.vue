@@ -41,6 +41,7 @@ import '../assets/postStyles.css';
 import axios from 'axios';
 
 export default {
+    props: ['community_id'],
     data() {
         return {
             post: undefined,
@@ -158,6 +159,10 @@ export default {
     },
 
     async mounted() {
+
+        if (this.community_id)
+            this.community = this.community_id;
+
         setTimeout(() => {
             if (!this.loggedIn) {
                 this.$router.push('/login');

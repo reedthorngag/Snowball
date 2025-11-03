@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Comment from '@/components/Comment.vue';
-import CommentCreate from '@/views/CommentCreate.vue';
+import CommentCreate from '@/components/CommentCreate.vue';
 </script>
 
 <template>
@@ -21,10 +21,15 @@ import axios from 'axios';
 export default {
     props: ['post_id', 'num_comments'],
     data() {
+        
+        const commentMap:{topLevel: any[], [key: string]: any} = {
+            topLevel: []
+        };
+
         return {
             newComment: false,
             error: this.error,
-            commentMap: undefined
+            commentMap: commentMap
         }
     },
     async mounted() {
@@ -34,16 +39,12 @@ export default {
             return;
         }
 
-        const commentMap:{topLevel: any[], [key: string]: any} = {
-            topLevel: []
-        };
-
         for (let comment of res.data) {
 
             if (!comment.reply_to)
-                commentMap.topLevel.push(comment);
+                this.commentMap.topLevel.push(comment);
             else
-                commentMap[comment._id] = comment;
+                this.commentMap[comment._id] = comment;
         }
 
     }
@@ -56,6 +57,8 @@ export default {
 .info {
     display: block;
     width: 100%;
+    margin-bottom: 1vh;
+    margin-left: 0.75vw;
 }
 
 .info span {

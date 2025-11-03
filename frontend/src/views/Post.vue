@@ -13,7 +13,7 @@ import Comments from '@/views/Comments.vue';
         </div>
         <div class="body">
             <div class="meta">
-                <span class="community"><RouterLink class="link" :to="'/communities/'+encodeURIComponent(post.community_id)">{{ post.community_id }}</RouterLink></span>
+                <span class="community">community: <RouterLink class="link" :to="'/communities/'+encodeURIComponent(post.community_id)">{{ post.community_id }}</RouterLink></span>
                 •
                 <span class="author">user: <RouterLink class="link" :to="'/users/'+encodeURIComponent(post.author_id)">{{ post.author_id }}</RouterLink></span>
                 •

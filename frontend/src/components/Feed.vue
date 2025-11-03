@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import Post from '@/components/Post.vue';
 import axios from 'axios';
-import { ref } from 'vue';
 
-const posts = ref([]);
 </script>
 
 <template>
     <main class="feed">
         <div v-if="posts.length === 0" class="content-container centered">No posts found!</div>
-        <Post v-for="post in posts" />
+        <Post v-for="post of posts" :post="post" />
     </main>
 </template>
 
 <script lang="ts">
 export default {
-    props: ['community', 'community_id'],
+    props: ['community_id'],
     emits: ['error'],
     methods: {
         onError(arg: object) {
@@ -31,7 +29,7 @@ export default {
     },
 
     async mounted() {
-        const feed = await axios.get(this.community ? `/api/v1/communities/${this.community_id}/feed` : '/api/v1/feed');
+        const feed = await axios.get(this.community_id ? `/api/v1/communities/${this.community_id}/feed` : '/api/v1/feed');
         if (feed.status != 200) {
             this.error = feed.data;
             return;

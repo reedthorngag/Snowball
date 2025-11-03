@@ -18,7 +18,10 @@ import Feed from '@/components/Feed.vue';
             <p class="text">{{ community.description }}</p>
         </div>
     </div>
-    <Feed community />
+    <div class="info">
+        <Button class="button" @click="$router.push('/communities/'+encodeURIComponent(community_id)+'/posts/create')">Create post</Button>
+    </div>
+    <Feed :community_id="community_id" />
 </template>
 
 <script lang="ts">
@@ -97,6 +100,13 @@ export default {
 
 .meta span {
     margin: 0 0.3vw;
+}
+
+.info {
+    display: block;
+    width: 100%;
+    margin-bottom: 1vh;
+    margin-left: 0.75vw;
 }
 
 </style>

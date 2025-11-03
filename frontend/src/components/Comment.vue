@@ -1,48 +1,77 @@
 <template>
-    <div class="comment">
-    <div class="comment-header">
-      <span class="author">{{ comment.author_id }}</span>
-      <span class="time">{{ getTime(Date.parse(comment.created_at)) }}</span>
+    <div :class="'comment' +comment ? ' content-container' : ''">
+        <div class="comment-header">
+            <span class="author">{{ comment.author_id }}</span>
+            <span class="time">{{ getTime(comment.created_at) }}</span>
+        </div>
+
+        <div v-if="editing">
+            <textarea v-model="editText" rows="3"></textarea>
+            <div class="edit-actions">
+            <button class="save-btn" @click="saveEdit">Save</button>
+            <button class="cancel-btn" @click="editing = false">Cancel</button>
+            </div>
+        </div>
+        <p v-else class="comment-body">{{ comment.body }}</p>
+
+        <div class="comment-actions">
+            <button class="action-btn reply" @click="reply = true">Reply</button>
+            <button v-if="isAuthor" class="action-btn edit" @click="editText = comment.body; editing = true">Edit</button>
+            <button v-if="isAuthor" class="action-btn delete" @click="deleteComment">Delete</button>
+        </div>
+        
+        <div class="replies">
+            
+            <h1>{{reply}}</h1>
+            <CommentCreate v-if="reply" :parent="comment" :map="map" @close="reply = false" />
+            
+            <Comment v-for="c of replies" :comment="c" :map="map" />
+        </div>
     </div>
-
-    <div v-if="editing">
-      <textarea v-model="editText" rows="3"></textarea>
-      <div class="edit-actions">
-        <button class="save-btn" @click="saveEdit">Save</button>
-        <button class="cancel-btn" @click="editing = false">Cancel</button>
-      </div>
-    </div>
-    <p v-else class="comment-body">{{ comment.body }}</p>
-
-    <div class="comment-actions">
-      <button class="action-btn reply" @click="reply = true">Reply</button>
-      <button v-if="isAuthor" class="action-btn edit" @click="editText = comment.body; editing = true">Edit</button>
-      <button v-if="isAuthor" class="action-btn delete" @click="deleteComment">Delete</button>
-    </div>
-  </div>
-
-  <replies>
-
-  </replies>
 
 </template>
 
 <script lang="ts">
+import Comment from '@/components/Comment.vue';
+import CommentCreate from '@/components/CommentCreate.vue';
 import axios from 'axios';
 
 export default {
-    props: ['comment', 'comments'],
+    props: ['comment', 'map'],
     data() {
         return {
             editing: false,
             editText: '',
-            reply: true,
+            reply: false,
             error: this.error,
-            isAuthor: false
+            isAuthor: false,
+            replies: [],
+            currUser: this.currUser
         }
     },
     mounted() {
 
+        setTimeout(() => {
+
+            // @ts-ignore
+            if (this.comment.author_id == this.currUser.user_id) {
+                this.isAuthor = true;
+            }
+
+            const replies = [];
+
+            for (let comment_id of this.comment.replies)
+                replies.push(this.map[comment_id]);
+            
+            replies.sort((a, b): number => {
+                const scoreCompare = b.score - a.score;
+                if (scoreCompare != 0) return scoreCompare;
+
+                return Date.parse(a.created_at) - Date.parse(b.created_at);
+            });
+
+            (this.replies as any) = replies;
+        }, 500);
     },
     methods: {
         async saveEdit() {
@@ -106,11 +135,13 @@ export default {
 
 <style scoped>
 
+.replies {
+    display: block;
+    
+}
+
 .comment {
-  background-color: var(--foreground);
   color: var(--text);
-  border: var(--border-width) solid var(--border-color);
-  padding: 1rem;
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
 }
 
