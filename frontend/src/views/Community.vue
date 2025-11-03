@@ -8,6 +8,14 @@ import Feed from '@/components/Feed.vue';
     <div class="content-container" style="margin-bottom: 2vh;">
         <div class="body">
             <div class="name">{{ community_id }}</div>
+            <div v-if="community.description" style="margin-bottom: 1vh; width: 80%;">
+                <div class="edit-actions" style="margin-bottom: 0.5vh;">
+                    <button v-if="editing" class="save-btn" @click="saveEdit">Save</button>
+                    <button v-if="editing" class="cancel-btn" @click="editing = false">Cancel</button>
+                    <button v-if="!editing" class="button edit-btn" @click="editing = true">Edit</button>
+                </div>
+                <textarea v-model="community.description" :class="'description'+(editing ? ' active' : '')" rows="3" :disabled="!editing"></textarea>
+            </div>
             <div class="meta">
                 <span class="community">{{ community.member_count || '0' }} members</span>
                 •
@@ -15,7 +23,6 @@ import Feed from '@/components/Feed.vue';
                 •
                 <span class="time">Created {{ getTime(community.birthtime) }}</span>
             </div>
-            <p class="text">{{ community.description }}</p>
         </div>
     </div>
     <div class="info">
@@ -41,14 +48,26 @@ export default {
                 description: ''
             },
             vote: 0,
-            error: this.error
+            error: this.error,
+            editing: false,
+            editText: ''
         };
     },
 
     emits: ['error'],
     methods: {
-        onError(arg: object) {
-            this.$emit('error', arg)
+        async saveEdit() {
+            const res = await axios.put(`/api/v1/communities/${encodeURIComponent(this.community_id)}`,
+                {
+                    description: this.community.description
+                });
+            if (res.status != 200) {
+                this.error = res.data;
+                return;
+            }
+
+            this.editing = false;
+            this.community.description = res.data.description;
         },
         getTime(time: string | number): string {
             time = Date.parse(time as string)
@@ -107,6 +126,60 @@ export default {
     width: 100%;
     margin-bottom: 1vh;
     margin-left: 0.75vw;
+}
+
+textarea {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    margin-left: 0.8vw;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--background);
+    color: var(--text);
+    resize: none;
+}
+
+.active {
+    border: var(--border-width) solid var(--border-color);
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.save-btn,
+.cancel-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.save-btn {
+  background-color: #2ea84e;
+  color: var(--text-dark);
+}
+
+.save-btn:hover {
+    background-color: #288f45;
+}
+
+.cancel-btn {
+  background-color: var(--background);
+  color: var(--text);
+}
+
+.cancel-btn:hover {
+    background-color: var(--foreground-hover);
+}
+
+.edit-btn {
+    padding: 0.5vh 0.5vw;
 }
 
 </style>

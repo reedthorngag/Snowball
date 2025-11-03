@@ -9,9 +9,10 @@ import '../assets/postStyles.css';
 
         <div class="form-group">
             <label for="community">Community</label>
-            <input id="community" type="text" v-model="community" placeholder="Search communities..." @focus="showDropdown = true" @focusout="showDropdown = false" @input="searchCommunities()"/>
+            <input id="community" type="text" v-model="community" placeholder="Search communities..." @focus="showDropdown = true" @focusout="closeCommunityList()" @input="searchCommunities()"/>
+            
             <ul v-if="showDropdown" class="dropdown">
-                <li v-for="c in communities" :key="(c as any).community_id" @click="community = (c as any).community_id">{{ (c as any).community_id }}</li>
+                <li v-for="c in communities" @click="community = (c as any).community_id">{{ (c as any).community_id }}</li>
                 <li v-if="communities.length === 0" class="no-result">No results found</li>
             </ul>
         </div>
@@ -68,8 +69,8 @@ export default {
 
     emits: ['error'],
     methods: {
-        onError(arg: object) {
-            this.$emit('error', arg)
+        closeCommunityList() {
+            setTimeout(()=>{this.showDropdown = false},100);
         },
 
         async createPost() {
@@ -147,7 +148,10 @@ export default {
                 if (Date.now() - this.lastInput < 450) {
                     return;
                 }
-                const res = await axios.get('/api/v1/search/communities?s='+encodeURIComponent(this.community));
+                const res = await axios.get(
+                    this.community ? 
+                    '/api/v1/search/communities?s='+encodeURIComponent(this.community) : 
+                    '/api/v1/communities');
                 if (res.status != 200) {
                     this.error = res.data;
                     return;
