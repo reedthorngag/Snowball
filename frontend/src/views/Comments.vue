@@ -1,18 +1,21 @@
+<script setup lang="ts">
+import Comment from '@/components/Comment.vue';
+import CommentCreate from '@/views/CommentCreate.vue';
+</script>
+
 <template>
     <div class="info">
         <Button class="button" @click="newComment = true">Add comment</Button>
         <span>{{ num_comments || '0' }} comments</span>
     </div>
-
-    <CommentCreate v-if="newComment" class="content-container" @close="newComment = false" />
+    
+    <CommentCreate v-if="newComment" :map="commentMap" :post_id="post_id" @close="newComment = false" class="content-container" />
 
     <Comment v-for="comment of (commentMap as any)?.topLevel" :comment="comment" :map="commentMap" class="content-container" />
 
 </template>
 
 <script lang="ts">
-import Comment from '@/components/Comment.vue';
-import CommentCreate from '@/components/CommentCreate.vue';
 import axios from 'axios';
 
 export default {
@@ -53,7 +56,6 @@ export default {
 .info {
     display: block;
     width: 100%;
-    margin-bottom: 1vh;
 }
 
 .info span {

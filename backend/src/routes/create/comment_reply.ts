@@ -48,6 +48,8 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'required'
 
     const reply = await comment.save();
     
+    await global.models.Comment.findOneAndUpdate({ _id: replyTo._id},{$push: {replies: reply._id}}).exec();
+
     await global.models.Post.findOneAndUpdate({ _id: req.params.post_id }, { $inc: { num_comments: 1 } });
 
     res.send(JSON.stringify(reply));
