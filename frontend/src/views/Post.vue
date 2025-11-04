@@ -7,9 +7,9 @@ import Comments from '@/views/Comments.vue';
 <template>
     <div class="content-container post" v-if="loaded">
         <div class="vote">
-            <button class="up" :class="{selected: vote===1}">▲</button>
+            <button class="up" :class="vote==1 ? 'selected' : 'none'" @click="upvote()">▲</button>
             <div class="score">{{ post.score || '0' }}</div>
-            <button class="down" :class="{selected: vote===-1}">▼</button>
+            <button class="down" :class="vote==-1 ? 'selected' : 'none'" @click="downvote()">▼</button>
         </div>
         <div class="body">
             <div class="meta">
@@ -20,7 +20,7 @@ import Comments from '@/views/Comments.vue';
                 <span class="time">{{ getTime(post.created_at) }}</span>
             </div>
             <h2 class="title">{{ post.title }}</h2>
-            <div class="centered">
+            <div v-if="post.image" class="centered">
                 <img :src="'/resources/'+post.image" />
             </div>
             <p class="text">{{ post.body }}</p>
@@ -65,22 +65,25 @@ export default {
         },
 
         async upvote() {
+            console.log('hi')
             if (!this.loaded) return;
-            const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
-            if (req.status != 200) {
-                this.error = req.data;
+            const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: this.vote==1 ? 0 : 1});
+            if (res.status != 200) {
+                this.error = res.data;
                 return;
             }
-            this.vote = 1;
+            this.post.score = res.data.score ?? this.post.score;
+            this.vote = this.vote==1 ? 0 : 1;
         },
         async downvote() {
             if (!this.loaded) return;
-            const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
-            if (req.status != 200) {
-                this.error = req.data;
+            const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: this.vote==-1 ? 0 : -1});
+            if (res.status != 200) {
+                this.error = res.data;
                 return;
             }
-            this.vote = -1;
+            this.post.score = res.data.score ?? this.post.score;
+            this.vote = this.vote==-1 ? 0 : -1;
         },
 
         getTime(time: string | number): string {

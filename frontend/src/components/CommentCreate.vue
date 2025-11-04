@@ -4,7 +4,7 @@
     <div>
       <textarea v-model="body" rows="3"></textarea>
       <div class="edit-actions">
-        <button class="save-btn" @click="create">Create</button>
+        <button class="save-btn" @click="async () => {await create(); $emit('created')}">Create</button>
         <button class="cancel-btn" @click="$emit('close')">Cancel</button>
       </div>
     </div>
@@ -21,7 +21,7 @@ import axios from 'axios';
 
 export default {
     props: ['post_id', 'parent', 'map'],
-    emits: ['close'],
+    emits: ['close', 'created'],
     data() {
         return {
             body: '',
@@ -40,8 +40,7 @@ export default {
             }
 
             this.map[res.data._id] = res.data;
-            this.parent.replies.push(res.data._id);
-            this.$emit('close');
+            this.parent?.replies?.push(res.data._id);
         },
     }
 }

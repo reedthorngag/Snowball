@@ -1,30 +1,25 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, ReturnDocument } from "mongodb";
 import Route from "../../types/route.js";
 import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 
-const get:Route = ['/posts/:post_id/vote', 'PUT', 'none', async (req: Request, res: Response) => {
+const get:Route = ['/posts/:post_id/vote', 'PUT', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
         return;
     }
 
-    if (!req.body.vote) {
+    if (req.body.vote === undefined) {
         res.status(422).send('{"error":"missing vote field"}');
         return;
     }
 
-    let vote_value = 0;
+    let vote_value = req.body.vote;
     switch (req.body.vote) {
-        case '1':
-            vote_value = 1;
-            break;
-        case '0':
-            vote_value = 0;
-            break;
-        case '-1':
-            vote_value = -1;
+        case 1:
+        case 0:
+        case -1:
             break;
         default:
             res.status(422).send('{"error":"invalid vote value"}');
@@ -34,26 +29,41 @@ const get:Route = ['/posts/:post_id/vote', 'PUT', 'none', async (req: Request, r
     // @ts-ignore
     let vote = await global.models.Vote.findOne({ user_id: req.auth.userID , post_id: req.params.post_id }).exec();
 
-    let effective_mod = vote_value;
     if (!vote) {
         vote = new global.models.Vote();
         // @ts-ignore
-        vote.user_id = req.authInfo.userID;
+        vote.user_id = req.auth.userID;
         vote.post_id = req.params.post_id;
+        vote.vote = vote_value;
 
     } else {
-        effective_mod = vote.vote - vote_value;
-    }
+        if (vote.vote == vote_value) {
+            res.status(200).send({});
+            return;
+        }
+        const old_vote = vote.vote;
+        vote.vote = vote_value;
 
+        if (old_vote)
+            if (!vote_value)
+                vote_value = -old_vote;
+            else
+                vote_value += vote_value;
+        
+    }
+    
+    let updated;
     try {
-        await global.models.Post.findOneAndUpdate({ _id: req.params.post_id }, { $inc: {score: effective_mod} }).exec();
+        updated = await global.models.Post.findOneAndUpdate({ _id: req.params.post_id }, { $inc: {score: vote_value} }, {new: true}).exec();
     } catch (e) {
+        console.log(e)
         res.status(404).send('"error":"post doesn\'t exist"}');
+        return;
     }
-
+    
     await vote.save();
 
-    res.status(200).send();
+    res.status(200).send({score: updated.score});
 }];
 
 

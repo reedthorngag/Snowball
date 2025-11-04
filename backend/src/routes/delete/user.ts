@@ -6,12 +6,17 @@ import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
 import { get_user } from "../../util/cache.js";
+import crypto from 'crypto';
 
 const del:Route = ['/user', 'DELETE', 'required', async (req: Request, res: Response) => {
 
     // @ts-ignore
     const user = await get_user(req.authInfo.userID);
 
+    user.google_id = undefined;
+    user.email = undefined;
+    user.password = undefined;
+    user.user_id = 'Deleted-'+crypto.randomBytes(16).toString('hex');
     user.deleted = true;
 
     const updated = await user.save();

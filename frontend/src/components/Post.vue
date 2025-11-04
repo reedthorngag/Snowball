@@ -4,13 +4,13 @@ import '../assets/postStyles.css';
 </script>
 
 <template>
-    <div class="content-container post">
-        <div class="vote">
-            <button class="up" :class="{selected: vote===1}">▲</button>
-            <div class="score">{{ post.score || '0' }}</div>
-            <button class="down" :class="{selected: vote===-1}">▼</button>
-        </div>
-        <RouterLink :to="'/posts/'+encodeURIComponent(post._id)" style="text-decoration: none;">
+    <div @click="$router.push('/posts/'+encodeURIComponent(post._id))">
+        <div class="content-container post">
+            <div class="vote">
+                <button class="up" :class="vote==1 ? 'selected' : 'none'" @click="e => {upvote();e.stopPropagation()}">▲</button>
+                <div class="score">{{ post.score || '0' }}</div>
+                <button class="down" :class="vote==-1 ? 'selected' : 'none'" @click="e => {downvote();e.stopPropagation()}">▼</button>
+            </div>
             <div class="body">
                 <div class="meta">
                     <span class="community"><RouterLink class="link" :to="'/communities/'+encodeURIComponent(post.community_id)">{{ post.community_id }}</RouterLink></span>
@@ -20,11 +20,13 @@ import '../assets/postStyles.css';
                     <span class="time">{{ getTime(post.created_at) }}</span>
                 </div>
                 <h2 class="title">{{ post.title }}</h2>
-                <img v-if="post.image" :src="'/resources/'+post.image" />
-                <p class="text" :style="`max-height: ${post.image ? '2vh' : '15vh'}; text-overflow: ellipsis;`">{{ post.body }}</p>
+                <div v-if="post.image" class="centered">
+                    <img :src="'/resources/'+post.image" />
+                </div>
+                <p class="text" :style="`max-height: 15vh;`">{{ post.body }}</p>
                 <div class="footer">💬 {{ post.num_comments }} comments</div>
             </div>
-        </RouterLink>
+        </div>
     </div>
 </template>
 
@@ -33,13 +35,11 @@ import axios from 'axios';
 import { RouterLink } from 'vue-router';
 
 export default {
-    props: {
-        post: Object
-    },
+    props: ['post'],
     data() {
         return {
-            post: this.post!,
-            vote: 0
+            vote: 0,
+            error: this.error
         };
     },
     mounted() {
@@ -53,21 +53,21 @@ export default {
         },
 
         async upvote() {
-            const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
-            if (req.status != 200) {
-                // @ts-ignore
-                this.error = req.data;
+            const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: this.vote==1 ? 0 : 1});
+            if (res.status != 200) {
+                this.error = res.data;
                 return;
             }
+            this.post.score = res.data.score || this.post.score;
             this.vote = 1;
         },
         async downvote() {
-            const req = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: 1});
-            if (req.status != 200) {
-                // @ts-ignore
-                this.error = req.data;
+            const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: this.vote==-1 ? 0 : -1});
+            if (res.status != 200) {
+                this.error = res.data;
                 return;
             }
+            this.post.score = res.data.score || this.post.score;
             this.vote = -1;
         },
 

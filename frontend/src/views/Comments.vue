@@ -9,7 +9,7 @@ import CommentCreate from '@/components/CommentCreate.vue';
         <span>{{ num_comments || '0' }} comments</span>
     </div>
     
-    <CommentCreate v-if="newComment" :map="commentMap" :post_id="post_id" @close="newComment = false" class="content-container" />
+    <CommentCreate v-if="newComment" :map="commentMap" :post_id="post_id" @close="newComment = false" @created="rebuild(); newComment = false" class="content-container" />
 
     <Comment v-for="comment of (commentMap as any)?.topLevel" :comment="comment" :map="commentMap" class="content-container" />
 
@@ -33,20 +33,26 @@ export default {
         }
     },
     async mounted() {
-        const res = await axios.get(`/api/v1/posts/${encodeURIComponent(this.post_id)}/comments`);
-        if (res.status != 200) {
-            this.error = res.data;
-            return;
+        await this.rebuild();
+    },
+    methods: {
+        async rebuild() {
+            const res = await axios.get(`/api/v1/posts/${encodeURIComponent(this.post_id)}/comments`);
+            if (res.status != 200) {
+                this.error = res.data;
+                return;
+            }
+
+            this.commentMap = {topLevel: []};
+
+            for (let comment of res.data) {
+
+                if (!comment.reply_to)
+                    this.commentMap.topLevel.push(comment);
+                else
+                    this.commentMap[comment._id] = comment;
+            }
         }
-
-        for (let comment of res.data) {
-
-            if (!comment.reply_to)
-                this.commentMap.topLevel.push(comment);
-            else
-                this.commentMap[comment._id] = comment;
-        }
-
     }
 }
 

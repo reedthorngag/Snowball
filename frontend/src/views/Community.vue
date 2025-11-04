@@ -138,6 +138,7 @@ textarea {
     background-color: var(--background);
     color: var(--text);
     resize: none;
+    white-space: pre;
 }
 
 .active {

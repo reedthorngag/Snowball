@@ -8,11 +8,6 @@ import path from "path";
 
 const del:Route = ['/posts/:post_id/comments/:comment_id', 'DELETE', 'required', async (req: Request, res: Response) => {
 
-    if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
-        return;
-    }
-
     const comment = await global.models.Comment.findOne({ _id: req.params.comment_id }).exec();
     if (!comment) {
         res.status(404).send();
@@ -32,7 +27,7 @@ const del:Route = ['/posts/:post_id/comments/:comment_id', 'DELETE', 'required',
 
     await comment.save()
 
-    res.status(200).send();
+    res.status(200).send(comment);
 }];
 
 

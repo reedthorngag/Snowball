@@ -14,7 +14,7 @@
         </div>
         <p v-else class="comment-body">{{ comment.body }}</p>
 
-        <div class="comment-actions">
+        <div v-if="!comment.deleted" class="comment-actions">
             <button class="action-btn reply" @click="reply = true">Reply</button>
             <button v-if="isAuthor" class="action-btn edit" @click="editText = comment.body; editing = true">Edit</button>
             <button v-if="isAuthor" class="action-btn delete" @click="deleteComment">Delete</button>
@@ -46,7 +46,8 @@ export default {
             error: this.error,
             isAuthor: false,
             replies: [],
-            currUser: this.currUser
+            currUser: this.currUser,
+            vote: 0
         }
     },
     mounted() {
@@ -88,6 +89,25 @@ export default {
             this.comment.body = res.data.body;
             this.comment.edited = true;
             this.comment.edited_at = res.data.edited_at;
+        },
+
+        async upvote() {
+            const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.comment.post_id)+'/comments/'+encodeURIComponent(this.comment._id)+'/vote', {vote: this.vote==1 ? 0 : 1});
+            if (res.status != 200) {
+                this.error = res.data;
+                return;
+            }
+            this.comment.score = res.data.score ?? this.comment.score;
+            this.vote = this.vote==1 ? 0 : 1;
+        },
+        async downvote() {
+            const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.comment.post_id)+'/comments/'+encodeURIComponent(this.comment._id)+'/vote', {vote: this.vote==-1 ? 0 : -1});
+            if (res.status != 200) {
+                this.error = res.data;
+                return;
+            }
+            this.comment.score = res.data.score ?? this.comment.score;
+            this.vote = this.vote==-1 ? 0 : -1;
         },
 
         async deleteComment() {

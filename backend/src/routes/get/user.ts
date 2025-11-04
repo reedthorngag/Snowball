@@ -19,14 +19,14 @@ const get:Route = ['/users/:user_id', 'GET', 'none', async (req: Request, res: R
 const get_curr:Route = ['/user', 'GET', 'required', async (req: Request, res: Response) => {
 
     // @ts-ignore
-    const user = get_user(req.auth.userID)
+    const user = await get_user(req.auth.userID)
 
     if (!user) {
         res.status(401).send();
         return;
     }
 
-    res.send(JSON.stringify(user));
+    res.send(user);
 }];
 
 

@@ -30,7 +30,7 @@
     color: var(--primary-bright);
 }
 
-.vote .up:hover, .vote .downvote:hover {
+.vote .up:hover, .vote .down:hover {
     color: var(--secondary-color);
 }
 
@@ -66,6 +66,8 @@
     font-size: 1rem;
     color: var(--text);
     margin-bottom: 1.5vh;
+    overflow: auto;
+    white-space: pre;
 }
 
 .post .body .footer {

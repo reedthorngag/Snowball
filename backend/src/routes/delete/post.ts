@@ -5,14 +5,9 @@ import { Request, Response } from "express";
 import validate from "../../util/validator.js";
 import fs from 'fs';
 import path from "path";
-import { get_post } from "../../util/cache.js";
+import { get_post, get_user } from "../../util/cache.js";
 
 const del:Route = ['/posts/:post_id', 'DELETE', 'required', async (req: Request, res: Response) => {
-
-    if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
-        return;
-    }
 
     const post = await get_post(req.params.post_id);
     // const post = await global.models.Post.findOne({ _id: req.params.post_id }).exec();
@@ -22,8 +17,8 @@ const del:Route = ['/posts/:post_id', 'DELETE', 'required', async (req: Request,
     }
 
     // @ts-ignore
-    if (post.author_id != req.auth.userID) {
-        res.status(403).send();
+    if (post.author_id != req.auth.userID && !req.auth.isAdmin) {
+        res.status(403).send({error: 'Must be author or admin'});
         return;
     }
 
@@ -41,7 +36,7 @@ const del:Route = ['/posts/:post_id', 'DELETE', 'required', async (req: Request,
     if (global.cache.posts[req.params.post_id])
         global.cache.posts[req.params.post_id].value = updated;
 
-    res.status(200).send();
+    res.status(200).send(post);
 }];
 
 
