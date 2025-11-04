@@ -1,29 +1,49 @@
-<template>
-    <div :class="'comment' +comment ? ' content-container' : ''">
-        <div class="comment-header">
-            <span class="author">{{ comment.author_id }}</span>
-            <span class="time">{{ getTime(comment.created_at) }}</span>
-        </div>
+<script setup lang="ts">
+import CommentCreate from '@/components/CommentCreate.vue';
 
-        <div v-if="editing">
-            <textarea v-model="editText" rows="3"></textarea>
-            <div class="edit-actions">
-            <button class="save-btn" @click="saveEdit">Save</button>
-            <button class="cancel-btn" @click="editing = false">Cancel</button>
+</script>
+
+<template>
+    <div :class="(comment ? '' : ' content-container')">
+        <div class="comment-container">
+            <div class="vote">
+                <button class="up" :class="vote==1 ? 'selected' : 'none'" @click="upvote()">▲</button>
+                <div class="score">{{ comment.score || '0' }}</div>
+                <button class="down" :class="vote==-1 ? 'selected' : 'none'" @click="downvote()">▼</button>
+            </div>
+            <div class="comment">
+                <div class="comment-header">
+                    <span class="author">user: 
+                        <RouterLink v-if="!comment.deleted" class="link" :to="'/users/'+encodeURIComponent(comment.author_id)">{{ comment.author_id }}</RouterLink>
+                        <span v-else>deleted</span>
+                        <span v-if="comment.edited" style="color: white; font-size: 1rem;">
+                            &nbsp;•&nbsp;
+                            <span class="time">Edited {{ getTime(comment.last_edit) }}</span>
+                        </span>
+                    </span>
+                    <span class="time">{{ getTime(comment.created_at) }}</span>
+                </div>
+
+                <div v-if="editing">
+                    <textarea v-model="editText" rows="3"></textarea>
+                    <div class="edit-actions">
+                        <button class="save-btn" @click="saveEdit">Save</button>
+                        <button class="cancel-btn" @click="editing = false">Cancel</button>
+                    </div>
+                </div>
+                <p v-else class="comment-body">{{ comment.body }}</p>
+
+                <div v-if="!comment.deleted" class="comment-actions">
+                    <button class="action-btn reply" @click="reply = true">Reply</button>
+                    <button v-if="isAuthor" class="action-btn edit" @click="editText = comment.body; editing = true">Edit</button>
+                    <button v-if="isAuthor" class="action-btn delete" @click="deleteComment">Delete</button>
+                </div>
+            
             </div>
         </div>
-        <p v-else class="comment-body">{{ comment.body }}</p>
-
-        <div v-if="!comment.deleted" class="comment-actions">
-            <button class="action-btn reply" @click="reply = true">Reply</button>
-            <button v-if="isAuthor" class="action-btn edit" @click="editText = comment.body; editing = true">Edit</button>
-            <button v-if="isAuthor" class="action-btn delete" @click="deleteComment">Delete</button>
-        </div>
-        
         <div class="replies">
             
-            <h1>{{reply}}</h1>
-            <CommentCreate v-if="reply" :parent="comment" :map="map" @close="reply = false" />
+            <CommentCreate v-if="reply" :post_id="comment.post_id" :parent="comment" :map="map" @close="reply = false" @created="rebuild(); reply = false;" />
             
             <Comment v-for="c of replies" :comment="c" :map="map" />
         </div>
@@ -33,7 +53,6 @@
 
 <script lang="ts">
 import Comment from '@/components/Comment.vue';
-import CommentCreate from '@/components/CommentCreate.vue';
 import axios from 'axios';
 
 export default {
@@ -52,6 +71,8 @@ export default {
     },
     mounted() {
 
+        this.rebuild();
+
         setTimeout(() => {
 
             // @ts-ignore
@@ -59,6 +80,10 @@ export default {
                 this.isAuthor = true;
             }
 
+        }, 500);
+    },
+    methods: {
+        rebuild() {
             const replies = [];
 
             for (let comment_id of this.comment.replies)
@@ -72,9 +97,7 @@ export default {
             });
 
             (this.replies as any) = replies;
-        }, 500);
-    },
-    methods: {
+        },
         async saveEdit() {
             const res = await axios.put(`/api/v1/posts/${encodeURIComponent(this.comment.post_id)}/comments/${encodeURIComponent(this.comment._id)}`,
                 {
@@ -124,7 +147,7 @@ export default {
         },
 
         getTime(time: string | number): string {
-            time = Date.parse(time as string)
+            time = typeof time == 'string' ? Date.parse(time as string) : time;
             const diff = Date.now() - time as number;
             if (diff < 1000 * 60) return 'A few seconds ago';
             if (diff < 1000 * 60 * 60) {
@@ -155,14 +178,63 @@ export default {
 
 <style scoped>
 
+.link {
+  color: var(--primary-color);
+}
+
+.vote {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 85%;
+    font-size: 1rem;
+    color: var(--primary-color);
+    width: 4%;
+}
+
+.vote .up, .vote .down {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: inherit;
+}
+
+.vote .selected {
+    color: var(--primary-bright);
+}
+
+.vote .up:hover, .vote .down:hover {
+    color: var(--secondary-color);
+}
+
+.vote .score {
+    margin: 0 0;
+    font-weight: 600;
+    color: var(--text);
+}
+
 .replies {
     display: block;
-    
+    margin-top: 1vh;
+    margin-left: 2%;
+    padding-left: 2%;
+    border-left: 2px solid var(--border-color);
+}
+
+.comment-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
 }
 
 .comment {
-  color: var(--text);
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+    display: block;
+    flex: 1;
+    color: var(--text);
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
 }
 
 .comment-header {
@@ -175,7 +247,8 @@ export default {
 }
 
 .author {
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--text-lighter);
 }
 
 .time {

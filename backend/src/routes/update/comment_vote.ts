@@ -4,7 +4,7 @@ import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 import comment from "./comment.js";
 
-const get:Route = ['/posts/:post_id/comments/comment_id/vote', 'PUT', 'required', async (req: Request, res: Response) => {
+const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send('{"error":"body must be json"}');
@@ -35,6 +35,7 @@ const get:Route = ['/posts/:post_id/comments/comment_id/vote', 'PUT', 'required'
         // @ts-ignore
         vote.user_id = req.auth.userID;
         vote.post_id = req.params.post_id;
+        vote.comment_id = req.params.comment_id;
         vote.vote = vote_value;
 
     } else {

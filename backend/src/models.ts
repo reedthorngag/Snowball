@@ -51,7 +51,7 @@ const CommentSchema = new Schema({
     replies: [String],
     created_at: {type: Date, default: Date.now},
     edited: {type: Boolean, default: false},
-    edited_at: Date,
+    last_edit: Date,
     deleted: {type: Boolean, default: false},
     deleted_by: String,
     score: {type: Number, default: 0}

@@ -1,5 +1,5 @@
 <template>
-    <div :class="'comment' +parent ? ' content-container' : ''">
+    <div :class="'comment' + (parent ? ' content-container' : '')">
 
     <div>
       <textarea v-model="body" rows="3"></textarea>
@@ -42,6 +42,9 @@ export default {
             this.map[res.data._id] = res.data;
             this.parent?.replies?.push(res.data._id);
         },
+    },
+    mounted() {
+      console.log('hello')
     }
 }
 </script>

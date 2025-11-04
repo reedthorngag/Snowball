@@ -115,7 +115,6 @@ export default {
     },
 
     async mounted() {
-        console.log(this.post_id)
         const post = await axios.get('/api/v1/posts/'+encodeURIComponent(this.post_id));
         if (post.status != 200) {
             this.error = post.data;
@@ -130,6 +129,11 @@ export default {
             return;
         }
         this.comments = comments.data;
+
+        const vote = await axios.get('/api/v1/posts/'+encodeURIComponent(this.post_id)+'/vote');
+        if (vote.status == 200) {
+            this.vote = vote.data.vote;
+        }
     }
 }
 
