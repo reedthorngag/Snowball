@@ -13,12 +13,9 @@ import axios from 'axios';
 
 <script lang="ts">
 export default {
-    props: ['community_id'],
+    props: ['community_id', 'user_id'],
     emits: ['error'],
     methods: {
-        onError(arg: object) {
-            this.$emit('error', arg)
-        }
     },
 
     data() {
@@ -29,7 +26,10 @@ export default {
     },
 
     async mounted() {
-        const feed = await axios.get(this.community_id ? `/api/v1/communities/${this.community_id}/feed` : '/api/v1/feed');
+        const feed = await axios.get(
+            this.community_id ? `/api/v1/communities/${this.community_id}/feed` : 
+            this.user_id ? `/api/v1/users/${this.user_id}/posts` :
+            '/api/v1/feed');
         if (feed.status != 200) {
             this.error = feed.data;
             return;

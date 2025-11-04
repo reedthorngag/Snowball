@@ -4,6 +4,7 @@ import Post from '@/views/Post.vue';
 import PostCreate from '@/views/PostCreate.vue';
 import CommunityCreate from '@/views/CommunityCreate.vue';
 import Community from '@/views/Community.vue';
+import User from '@/views/User.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,12 @@ const router = createRouter({
       path: '/communities/:community_id',
       name: 'Community',
       component: Community,
+      props: true
+    },
+    {
+      path: '/users/:user_id',
+      name: 'User',
+      component: User,
       props: true
     },
     {
