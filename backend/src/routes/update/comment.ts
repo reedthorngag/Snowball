@@ -10,7 +10,7 @@ import sanitize from "../../util/sanitizer.js";
 const create:Route = ['/posts/:post_id/comments/:comment_id', 'PUT', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
+        res.status(422).send({error:"body must be json"});
         return;
     }
 
@@ -28,7 +28,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'PUT', 'required',
 
     let t = validate(req.body,'body', true, 3, 1000);
     if (t){
-        res.status(422).send('{"error":"'+t+'"}');
+        res.status(422).send({error: t});
         return;
     }
     comment.body = sanitize(req.body.body, true);

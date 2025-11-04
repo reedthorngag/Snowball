@@ -11,28 +11,28 @@ const create:Route = ['/signup', 'POST', 'none', async (req: Request, res: Respo
     
     if (!req.cookies.auth) {
         if (!req.body.username || !req.body.password) {
-            res.status(422).send({"error":"Missing required fields"});
+            res.status(422).send({error:"Missing required fields"});
             return;
         }
     }
 
     if (!req.is('application/json')) {
-        res.status(422).send({"error":"body must be json"});
+        res.status(422).send({error:"body must be json"});
         return;
     }
 
     let t = validate(req.body, 'username', true, 1, 32)
     if (t) {
-        res.status(422).send({"error":t});
+        res.status(422).send({error: t});
         return;
     }
 
     if (req.body.email && req.body.email.length > 64) {
-        res.status(422).send({"error":"invalid email"});
+        res.status(422).send({error:"invalid email"});
         return;
 
     } else if (await get_user(req.body.username)) {
-        res.status(422).send({"error":"Username taken"});
+        res.status(422).send({error:"Username taken"});
         return;
     }
 
@@ -40,7 +40,7 @@ const create:Route = ['/signup', 'POST', 'none', async (req: Request, res: Respo
     // wants to bypass them then thats up to them
     t = validate(req.body, 'password', false, 8, 64)
     if (t) {
-        res.status(422).send({"error": t});
+        res.status(422).send({error: t});
         return;
     }
 
@@ -49,17 +49,17 @@ const create:Route = ['/signup', 'POST', 'none', async (req: Request, res: Respo
     if (user) {
 
         if (await global.models.User.findOne({ google_id: user.google_id }).exec()) {
-            res.status(422).send({"error":"Account already exists"});
+            res.status(422).send({error:"Account already exists"});
             return;
         }
 
     } else if (!req.body.password) {
-        res.status(422).send('{"error":"invalid auth"}');
+        res.status(422).send({error:"invalid auth"});
         return;
     }
 
     if (await global.models.User.findOne({ user_id: req.body.username }).exec()) {
-        res.status(422).send({"error":"user already exists"});
+        res.status(422).send({error:"user already exists"});
         return;
     }
 
@@ -74,7 +74,7 @@ const create:Route = ['/signup', 'POST', 'none', async (req: Request, res: Respo
 
     t = validate(req.body, 'description', false, 0, 150);
     if (t) {
-        res.status(422).send({"error":t});
+        res.status(422).send({error: t});
         return;
     }
     a.description = sanitize(req.body.description, true);

@@ -12,9 +12,9 @@ import axios from 'axios';
         </RouterLink>
         <div class="sidebar-list">
             <p v-if="(communities as string | null)?.length === 0">No communities found</p>
-            <a v-for="community in communities" :href="'/communities/'+(community as any).community_id">
+            <RouterLink v-for="community in communities" :to="'/communities/'+(community as any).community_id">
                 {{(community as any).community_id}}
-            </a>
+            </RouterLink>
         </div>
     </div class="sidebar">
 </template>

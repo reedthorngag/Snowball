@@ -11,7 +11,7 @@ import sanitize from "../../util/sanitizer.js";
 const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
+        res.status(422).send({error:"body must be json"});
         return;
     }
 
@@ -30,7 +30,7 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
  
     let t = validate(req.body, 'title', false, 1, 48);
     if (t){
-        res.status(422).send('{"error":"'+t+'"}');
+        res.status(422).send({error: t});
         return;
     }
     if (req.body.title)
@@ -38,7 +38,7 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
 
     t = validate(req.body, 'body', false, 1, 1500);
     if (t){
-        res.status(422).send('{"error":"'+t+'"}');
+        res.status(422).send({error: t});
         return;
     }
     if (req.body.body)
@@ -47,12 +47,9 @@ const create:Route = ['/posts/:post_id', 'PUT', 'none', async (req: Request, res
     post.edited = true;
     post.last_edit = Date.now();
 
-    const updated = await post.save();
+    await post.save();
 
-    if (global.cache.posts[req.params.post_id])
-        global.cache.posts[req.params.post_id].value = updated;
-
-    res.status(200).send();
+    res.status(200).send(post);
 }];
 
 

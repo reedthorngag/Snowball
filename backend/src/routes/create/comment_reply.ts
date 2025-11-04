@@ -9,19 +9,19 @@ import sanitize from "../../util/sanitizer.js";
 const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
+        res.status(422).send({error:"body must be json"});
         return;
     }
 
     const post = await get_post(req.params.post_id);
     //const post = await global.models.Comment.findById(req.params.post_id).exec();
     if (!post) {
-        res.status(404).send('{"error":"Post doesn\'t exist"}');
+        res.status(404).send({error:"Post doesn\'t exist"});
         return;
     }
 
     if (post.deleted) {
-        res.status(404).send('{"error":"Post deleted"}');
+        res.status(404).send({error:"Post deleted"});
         return;
     }
 
@@ -40,7 +40,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'POST', 'required'
 
     let t = validate(req.body, 'body', false, 1, 1000);
     if (t){
-        res.status(422).send('{"error":"'+t+'"}');
+        res.status(422).send({error: t});
         return;
     }
     if (req.body.body)

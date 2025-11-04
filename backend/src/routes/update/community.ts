@@ -11,7 +11,7 @@ import sanitize from "../../util/sanitizer.js";
 const create:Route = ['/communities/:community_id', 'PUT', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
+        res.status(422).send({error:"body must be json"});
         return;
     }
 
@@ -23,24 +23,21 @@ const create:Route = ['/communities/:community_id', 'PUT', 'required', async (re
     }
 
     // @ts-ignore
-    if (community.owner == req.auth.userID) {
-        res.status(422).send('{"error":"Only the owner can edit"}');
+    if (community.owner != req.auth.userID) {
+        res.status(422).send({error:"Only the owner can edit"});
         return;
     }
 
-    let t = validate(req.body,'description', true, 3, 32);
+    let t = validate(req.body,'description', true, 1, 32);
     if (t){
-        res.status(422).send('{"error":"'+t+'"}');
+        res.status(422).send({error: t});
         return;
     }
     community.description = sanitize(req.body.description, true);
 
-    const updated = await community.save();
+    await community.save();
 
-    if (global.cache.communities[req.params.community_id])
-        global.cache.communities[req.params.community_id].value = updated;
-
-    res.send(JSON.stringify(updated));
+    res.send(community);
 }];
 
 

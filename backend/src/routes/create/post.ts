@@ -11,19 +11,19 @@ import sanitize from "../../util/sanitizer.js";
 const create:Route = ['/communities/:community_id/posts', 'POST', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
+        res.status(422).send({error:"body must be json"});
         return;
     }
 
     const community = await get_community(req.params.community_id);
 
     if (!community) {
-        res.status(404).send('{"error":"Community doesn\'t exist"}');
+        res.status(404).send({error:"Community doesn\'t exist"});
         return;
     }
 
     if (community.deleted) {
-        res.status(404).send('{"error":"Community deleted"}');
+        res.status(404).send({error:"Community deleted"});
         return;
     }
 
@@ -34,14 +34,14 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
  
     let t = validate(req.body, 'title', true, 1, 48);
     if (t){
-        res.status(422).send('{"error":"'+t+'"}');
+        res.status(422).send({error: t});
         return;
     }
     post.title = sanitize(req.body.title, true);
 
     t = validate(req.body, 'body', false, 1, 1500);
     if (t){
-        res.status(422).send('{"error":"'+t+'"}');
+        res.status(422).send({error: t});
         return;
     }
     if (req.body.body)
@@ -50,11 +50,11 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
     if (req.body.image) {
         let r = /^[a-zA-Z0-9]+$/;
         if (!r.test(req.body.image)) {
-            res.status(422).send('{"error":"Please provide the resource ID for the image"}');
+            res.status(422).send({error:"Please provide the resource ID for the image"});
             return;
         }
         if (!fs.existsSync('/app/file-store/'+req.body.image)) {
-            res.status(422).send('{"error":"Provided resource ID doesn\'t exist"}');
+            res.status(422).send({error:"Provided resource ID doesn\'t exist"});
             return;
         }
         post.image = req.body.image;
@@ -62,18 +62,18 @@ const create:Route = ['/communities/:community_id/posts', 'POST', 'required', as
 
     if (req.body.video) {
         if (req.body.image) {
-            res.status(422).send('{"error":"Post already has an image attached"}');
+            res.status(422).send({error:"Post already has an image attached"});
             return;
         }
 
         let r = /^[a-zA-Z0-9]+$/;
         if (!r.test(req.body.video)) {
-            res.status(422).send('{"error":"Please provide the resource ID for the image"}');
+            res.status(422).send({error:"Please provide the resource ID for the image"});
             return;
         }
 
         if (!fs.existsSync('/app/file-store/'+req.body.video)) {
-            res.status(422).send('{"error":"Provided resource ID doesn\'t exist"}');
+            res.status(422).send({error:"Provided resource ID doesn\'t exist"});
             return;
         }
 

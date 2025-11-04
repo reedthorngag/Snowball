@@ -8,13 +8,19 @@ import Feed from '@/components/Feed.vue';
     <div class="content-container" style="margin-bottom: 2vh;">
         <div class="body">
             <div class="name">{{ community_id }}</div>
-            <div v-if="community.description" style="margin-bottom: 1vh; width: 80%;">
-                <div class="edit-actions" style="margin-bottom: 0.5vh;">
+            <div v-if="community.description || isOwner" style="margin-bottom: 1vh; width: 80%;">
+                <div v-if="isOwner" class="edit-actions" style="margin-bottom: 0.5vh;">
                     <button v-if="editing" class="save-btn" @click="saveEdit">Save</button>
                     <button v-if="editing" class="cancel-btn" @click="editing = false">Cancel</button>
                     <button v-if="!editing" class="button edit-btn" @click="editing = true">Edit</button>
                 </div>
-                <textarea v-model="community.description" :class="'description'+(editing ? ' active' : '')" rows="3" :disabled="!editing"></textarea>
+                <textarea 
+                    v-model="community.description" 
+                    :class="'description'+(editing ? ' active' : '')" rows="3" 
+                    :disabled="!editing && !isOwner" 
+                    :placeholder="isOwner && !community.description ? 'Add a description...' : ''" 
+                    @click="() => {editing = true}">
+                </textarea>
             </div>
             <div class="meta">
                 <span class="community">{{ community.member_count || '0' }} members</span>
@@ -28,7 +34,7 @@ import Feed from '@/components/Feed.vue';
     <div class="info">
         <Button class="button" @click="$router.push('/communities/'+encodeURIComponent(community_id)+'/posts/create')">Create post</Button>
     </div>
-    <Feed :community_id="community_id" />
+    <Feed :community_id="community_id" :key="community_id" />
 </template>
 
 <script lang="ts">
@@ -50,13 +56,22 @@ export default {
             vote: 0,
             error: this.error,
             editing: false,
-            editText: ''
+            editText: '',
+            isOwner: false,
+            currUser: this.currUser,
+            description: ''
         };
     },
 
     emits: ['error'],
     methods: {
         async saveEdit() {
+            if (this.description == this.community.description) {
+                this.editing = false;
+                return;
+            }
+                
+
             const res = await axios.put(`/api/v1/communities/${encodeURIComponent(this.community_id)}`,
                 {
                     description: this.community.description
@@ -104,6 +119,13 @@ export default {
             return;
         }
         this.community = community.data;
+        this.description = community.data.description;
+
+        setTimeout(() => {
+            // @ts-ignore
+            if (this.community.owner == this.currUser!.user_id)
+                this.isOwner = true;
+        }, 500);
     }
 }
 

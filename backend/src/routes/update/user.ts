@@ -11,7 +11,7 @@ import sanitize from "../../util/sanitizer.js";
 const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
+        res.status(422).send({error:"body must be json"});
         return;
     }
 
@@ -20,26 +20,21 @@ const create:Route = ['/user', 'PUT', 'none', async (req: Request, res: Response
     // const user = await global.models.User.findOne({ user_id: req.auth.userID }).exec();
    
     if (!user) {
-        res.status(404).send();
+        res.status(404).send({error: 'User not found'});
         return;
     }
  
     let t = validate(req.body, 'description', true, 1, 48);
     if (t){
-        res.status(422).send('{"error":"'+t+'"}');
+        res.status(422).send({error: t});
         return;
     }
     if (req.body.description)
         user.description = sanitize(req.body.description, true);
 
-    const updated = await user.save();
+    await user.save();
 
-    // @ts-expect-error
-    if (global.cache.users[req.auth.userID])
-        // @ts-expect-error
-        global.cache.users[req.auth.userID].value = updated;
-
-    res.status(200).send();
+    res.status(200).send(user);
 }];
 
 

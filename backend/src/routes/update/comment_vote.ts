@@ -7,12 +7,12 @@ import comment from "./comment.js";
 const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'required', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
-        res.status(422).send('{"error":"body must be json"}');
+        res.status(422).send({error:"body must be json"});
         return;
     }
 
     if (req.body.vote === undefined) {
-        res.status(422).send('{"error":"missing vote field"}');
+        res.status(422).send({error:"missing vote field"});
         return;
     }
 
@@ -23,7 +23,7 @@ const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'required
         case -1:
             break;
         default:
-            res.status(422).send('{"error":"invalid vote value"}');
+            res.status(422).send({error:"invalid vote value"});
             return;
     }
 
