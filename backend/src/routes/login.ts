@@ -4,20 +4,20 @@ import { Request, Response } from "express";
 import validate from "../util/validator.js";
 import bcrypt from 'bcrypt';
 
-const login:Route = ['/login', 'POST', 'required', async (req: Request, res: Response) => {
+const login:Route = ['/login', 'POST', 'none', async (req: Request, res: Response) => {
 
     if (!req.is('application/json')) {
         res.status(422).send({error:"Must be json"});
         return;
     }
 
-    let t = validate(req.body, 'username', true, 0, 64);
+    let t = validate(req.body, 'username', true, 1, 64);
     if (t) {
         res.status(422).send({error: t});
         return;
     }
 
-     t = validate(req.body, 'password', true, 0, 64);
+    t = validate(req.body, 'password', true, 1, 64);
     if (t) {
         res.status(422).send({error: t});
         return;
@@ -27,6 +27,11 @@ const login:Route = ['/login', 'POST', 'required', async (req: Request, res: Res
 
     if (!user) {
         res.status(401).send({error: "Incorrect username or password"});
+        return;
+    }
+
+    if (!user.password) {
+        res.status(401).send({error: "No password set, sign in with google"});
         return;
     }
 

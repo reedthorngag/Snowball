@@ -132,6 +132,7 @@ export default {
     justify-content: center;
     align-items: center;
     padding: 2rem 4rem;
+    background-color: var(--background);
     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);

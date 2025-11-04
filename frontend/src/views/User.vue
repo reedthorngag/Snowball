@@ -106,6 +106,10 @@ export default {
     },
 
     async mounted() {
+        if (!this.user_id) {
+            
+        }
+
         const user = await axios.get('/api/v1/users/'+encodeURIComponent(this.user_id));
         if (user.status != 200) {
             this.error = user.data;
