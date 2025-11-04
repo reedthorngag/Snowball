@@ -8,7 +8,7 @@ import sanitize from "../../util/sanitizer.js";
 
 const leave:Route = ['/communities/:community_id/leave', 'PUT', 'required', async (req: Request, res: Response) => {
 
-    const community = await get_community(req.params.post_id);
+    const community = await get_community(req.params.community_id);
     //const post = await global.models.Comment.findById(req.params.post_id).exec();
     if (!community) {
         res.status(404).send({error:"Community doesn\'t exist"});
@@ -32,9 +32,9 @@ const leave:Route = ['/communities/:community_id/leave', 'PUT', 'required', asyn
 
     await user.save();
     
-    await global.models.Community.findOneAndUpdate({ _id: community.community_id},{$inc: {num_members: -1}}).exec();
+    await global.models.Community.findOneAndUpdate({ community_id: community.community_id},{$inc: {num_members: -1}}).exec();
 
-    res.status(200).send();
+    res.status(200).send(user);
 }];
 
 

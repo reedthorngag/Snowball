@@ -35,7 +35,7 @@ export default {
                     body: this.body
                 });
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
 

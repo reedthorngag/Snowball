@@ -69,7 +69,7 @@ export default {
             if (!this.loaded) return;
             const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: this.vote==1 ? 0 : 1});
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
             this.post.score = res.data.score ?? this.post.score;
@@ -79,7 +79,7 @@ export default {
             if (!this.loaded) return;
             const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: this.vote==-1 ? 0 : -1});
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
             this.post.score = res.data.score ?? this.post.score;

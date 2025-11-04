@@ -34,7 +34,8 @@ export default {
             currUser: this.currUser,
             error: this.error,
             showError: false,
-            showSignup: this.showSignup
+            showSignup: this.showSignup,
+            lastError: 0
         };
     },
     methods: {
@@ -69,9 +70,10 @@ export default {
     },
     watch: {
         error(newVal) {
+            this.lastError = Date.now();
             this.showError = true;
             setTimeout(() => {
-                if (this.error != newVal) return;
+                if (Date.now() - this.lastError < 2450) return;
                 this.showError = false;
             }, 2500);
         }

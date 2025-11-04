@@ -69,7 +69,7 @@ export default {
 
             if (res.status != 200) {
                 // @ts-ignore
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
 

@@ -101,7 +101,7 @@ export default {
 
             if (res.status != 200) {
                 // @ts-ignore
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
 
@@ -153,7 +153,7 @@ export default {
                     '/api/v1/search/communities?s='+encodeURIComponent(this.community) : 
                     '/api/v1/communities');
                 if (res.status != 200) {
-                    this.error = res.data;
+                    this.error = res.data || String(res.status);
                     return;
                 }
 

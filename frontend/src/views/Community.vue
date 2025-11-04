@@ -6,7 +6,8 @@ import Feed from '@/components/Feed.vue';
 
 <template>
     <div class="content-container" style="margin-bottom: 2vh;">
-        <div class="body">
+        <div class="body" style="position: relative;">
+            <button v-if="isOwner && currUser" class="button join-btn" @click="toggleJoinCommunity()">{{ joined ? 'leave' : 'join' }}</button>
             <div class="name">{{ community_id }}</div>
             <div v-if="community.description || isOwner" style="margin-bottom: 1vh; width: 80%;">
                 <div v-if="isOwner" class="edit-actions" style="margin-bottom: 0.5vh;">
@@ -59,12 +60,30 @@ export default {
             editText: '',
             isOwner: false,
             currUser: this.currUser,
-            description: ''
+            description: '',
+            joined: false
         };
     },
 
     emits: ['error'],
     methods: {
+
+        async toggleJoinCommunity() {
+
+            const res = await axios.put(`/api/v1/communities/${this.community_id}/${this.joined ? 'leave' : 'join'}`);
+            if (res.status != 200) {
+                this.error = res.data || String(res.status);
+                return;
+            }
+
+            // @ts-ignore
+            if (this.currUser?.communities)
+                // @ts-ignore
+                this.currUser.communities = res.data.communities;
+            this.joined = !this.joined;
+            this.community.member_count += this.joined ? 1 : -1
+        },
+
         async saveEdit() {
             if (this.description == this.community.description) {
                 this.editing = false;
@@ -77,7 +96,7 @@ export default {
                     description: this.community.description
                 });
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
 
@@ -125,6 +144,11 @@ export default {
             // @ts-ignore
             if (this.community.owner == this.currUser!.user_id)
                 this.isOwner = true;
+
+            // @ts-ignore
+            this.joined = this.currUser?.communities?.includes(this.community_id) ?? false;
+            // @ts-ignore
+            console.log(this.currUser?.communities);
         }, 500);
     }
 }
@@ -132,6 +156,13 @@ export default {
 </script>
 
 <style scoped>
+
+.join-btn {
+    position: absolute;
+    right: 0.75vw;
+    border-radius: var(--border-radius);
+}
+
 .name {
     color: var(--primary-color);
     font-size: 2rem;

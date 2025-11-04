@@ -13,9 +13,9 @@ import '../assets/postStyles.css';
             </div>
             <div class="body">
                 <div class="meta">
-                    <span class="community"><RouterLink class="link" :to="'/communities/'+encodeURIComponent(post.community_id)">{{ post.community_id }}</RouterLink></span>
+                    <span class="community" @click="e=>e.stopPropagation()"><RouterLink class="link" :to="'/communities/'+encodeURIComponent(post.community_id)">{{ post.community_id }}</RouterLink></span>
                     •
-                    <span class="author">user: <RouterLink class="link" :to="'/users/'+encodeURIComponent(post.author_id)">{{ post.author_id }}</RouterLink></span>
+                    <span class="author" @click="e=>e.stopPropagation()">user: <RouterLink class="link" :to="'/users/'+encodeURIComponent(post.author_id)">{{ post.author_id }}</RouterLink></span>
                     •
                     <span class="time">{{ getTime(post.created_at) }}</span>
                 </div>
@@ -55,7 +55,7 @@ export default {
         async upvote() {
             const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: this.vote==1 ? 0 : 1});
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
             this.post.score = res.data.score || this.post.score;
@@ -64,7 +64,7 @@ export default {
         async downvote() {
             const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.post._id)+'/vote', {vote: this.vote==-1 ? 0 : -1});
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
             this.post.score = res.data.score || this.post.score;

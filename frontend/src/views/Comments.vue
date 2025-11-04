@@ -39,7 +39,7 @@ export default {
         async rebuild() {
             const res = await axios.get(`/api/v1/posts/${encodeURIComponent(this.post_id)}/comments`);
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
 

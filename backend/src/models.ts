@@ -20,7 +20,7 @@ const CommunitySchema = new Schema({
     community_id: String,
     owner: String,
     mods: [String],
-    member_count: Number,
+    member_count: {type: Number, default: 0},
     description: String,
     birthtime: {type: Date, default: Date.now},
     deleted: {type: Boolean, default: false},

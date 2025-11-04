@@ -57,7 +57,7 @@ export default {
             const res = await axios.post('/api/v1/login', {username: this.username, password: this.password});
             this.password = '';
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return; 
             }
             this.username = '';

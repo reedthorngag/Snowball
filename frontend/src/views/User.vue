@@ -70,7 +70,7 @@ export default {
                     description: this.user.description
                 });
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
 

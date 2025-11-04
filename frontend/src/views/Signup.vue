@@ -81,7 +81,7 @@ export default {
                     this.error = 'Auth token expired!';
                 }
 
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return; 
             }
             this.username = '';

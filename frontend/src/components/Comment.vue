@@ -104,7 +104,7 @@ export default {
                     body: this.editText
                 });
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
 
@@ -117,7 +117,7 @@ export default {
         async upvote() {
             const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.comment.post_id)+'/comments/'+encodeURIComponent(this.comment._id)+'/vote', {vote: this.vote==1 ? 0 : 1});
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
             this.comment.score = res.data.score ?? this.comment.score;
@@ -126,7 +126,7 @@ export default {
         async downvote() {
             const res = await axios.put('/api/v1/posts/'+encodeURIComponent(this.comment.post_id)+'/comments/'+encodeURIComponent(this.comment._id)+'/vote', {vote: this.vote==-1 ? 0 : -1});
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
             this.comment.score = res.data.score ?? this.comment.score;
@@ -136,7 +136,7 @@ export default {
         async deleteComment() {
             const res = await axios.delete(`/api/v1/posts/${encodeURIComponent(this.comment.post_id)}/comments/${encodeURIComponent(this.comment._id)}`);
             if (res.status != 200) {
-                this.error = res.data;
+                this.error = res.data || String(res.status);
                 return;
             }
 

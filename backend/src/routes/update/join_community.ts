@@ -8,28 +8,28 @@ import sanitize from "../../util/sanitizer.js";
 
 const join:Route = ['/communities/:community_id/join', 'PUT', 'required', async (req: Request, res: Response) => {
 
-    const community = await get_community(req.params.post_id);
+    const community = await get_community(req.params.community_id);
     
     if (!community) {
         res.status(404).send({error:"Community doesn\'t exist"});
         return;
     }
-
+    
     if (community.deleted) {
         res.status(404).send({error:"Community deleted"});
         return;
     }
-
+    
     // @ts-ignore
     const user = await get_user(req.auth.userID);
-
-    user.communities.push(community.community_id);
-
-    await user.save();
     
-    await global.models.Community.findOneAndUpdate({ _id: community.community_id},{$inc: {num_members: 1}}).exec();
+    user.communities.push(community.community_id);
+    
+    await user.save(user);
+    
+    await global.models.Community.findOneAndUpdate({ community_id: community.community_id},{$inc: {num_members: 1}}).exec();
 
-    res.send();
+    res.status(200).send(user);
 }];
 
 
