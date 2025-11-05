@@ -5,6 +5,7 @@ import PostCreate from '@/views/PostCreate.vue';
 import CommunityCreate from '@/views/CommunityCreate.vue';
 import Community from '@/views/Community.vue';
 import User from '@/views/User.vue';
+import _404 from '@/views/_404.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +65,11 @@ const router = createRouter({
       name: 'Signup',
       component: Feed,
       props: { showLogin: true }
+    },
+    {
+      path: '/:catchAll(.*)*',
+      name: 'Not found',
+      component: _404
     }
     // {
     //   path: '/about',
