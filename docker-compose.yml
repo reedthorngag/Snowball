@@ -46,7 +46,7 @@ services:
     ports:
       - 443:443
       - 80:80
-    command: sh -c "npm run ${ENV}"
+    command: sh -c "npm run DEV"
 
 volumes:
   db-data:

@@ -22,6 +22,12 @@ const router = createRouter({
       props: true
     },
     {
+      path: '/communities/:community_id/posts/create',
+      name: 'Community',
+      component: PostCreate,
+      props: true
+    },
+    {
       path: '/communities/:community_id',
       name: 'Community',
       component: Community,
