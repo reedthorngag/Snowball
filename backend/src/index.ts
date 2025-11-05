@@ -47,8 +47,8 @@ app.use((req, res, next) => {
 const local_app = express().use('/',local_router);
 
 if (process.env.ENV === 'PROD') {
-    var privateKey = fs.readFileSync('./privatekey.key' );
-    var certificate = fs.readFileSync('./certificate.crt' );
+    var privateKey = fs.readFileSync('/app/backend/privatekey.key' );
+    var certificate = fs.readFileSync('/app/backend/certificate.crt' );
     https.createServer({
         key: privateKey,
         cert: certificate
