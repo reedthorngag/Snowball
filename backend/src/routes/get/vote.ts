@@ -8,7 +8,6 @@ const get:Route = ['/posts/:post_id/vote', 'GET', 'required', async (req: Reques
     // @ts-ignore
     let vote = await global.models.Vote.findOne({ user_id: req.auth.userID , post_id: req.params.post_id }).exec();
 
-    console.log(vote);
     if (!vote) {
         res.status(404).send({error: 'No vote made yet'});
         return;
