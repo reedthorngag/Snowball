@@ -3,11 +3,12 @@ import Route from "../../types/route.js";
 import logger from "../../util/logger.js";
 import { Request, Response } from "express";
 
-const post_vote:Route = ['/posts/:post_id/vote', 'GET', 'required', async (req: Request, res: Response) => {
+const get:Route = ['/posts/:post_id/vote', 'GET', 'required', async (req: Request, res: Response) => {
 
     // @ts-ignore
     let vote = await global.models.Vote.findOne({ user_id: req.auth.userID , post_id: req.params.post_id }).exec();
 
+    console.log(vote);
     if (!vote) {
         res.status(404).send({error: 'post doesn\'t exist'});
 
@@ -31,6 +32,6 @@ const comment_vote:Route = ['/posts/:post_id/comments/:comment_id/vote', 'GET', 
 
 
 export default [
-    post_vote,
+    get,
     comment_vote
 ];

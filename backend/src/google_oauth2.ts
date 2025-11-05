@@ -25,14 +25,11 @@ function initGoogleOauth2(app:Express) {
         
         let user = await global.models.User.findOne({ google_id: profile.id, deleted: false }).select(" user_id admin banned deleted").exec();
 
-        console.log(user);
-
         if (!user) {
             const id = crypto.randomBytes(16).toString('hex');
 
             global.userCreation[id] = { google_id: profile.id, email: profile.email, time: Date.now() };
-
-            console.log('hi')
+            
             profile['noUserID'] = true;
             profile['tmpID'] = id;
             return done(null, profile);

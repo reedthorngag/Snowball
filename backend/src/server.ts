@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(`/api/${process.env.API_VERSION}`, (req:Request, res:Response, next) => {
-    console.log(req.path)
+    Logger.info(req.path)
     router(req, res, next)
 });
 
