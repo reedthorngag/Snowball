@@ -58,7 +58,7 @@ const get:Route = ['/posts/:post_id/comments/:comment_id/vote', 'PUT', 'required
     try {
         updated = await global.models.Comment.findOneAndUpdate({ _id: req.params.comment_id }, { $inc: {score: vote_value} }, {new: true}).exec();
     } catch (e) {
-        res.status(404).send('"error":"comment doesn\'t exist"}');
+        res.status(404).send({"error":"comment doesn\'t exist"});
         return;
     }
     

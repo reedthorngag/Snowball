@@ -56,7 +56,7 @@ const get:Route = ['/posts/:post_id/vote', 'PUT', 'required', async (req: Reques
     try {
         updated = await global.models.Post.findOneAndUpdate({ _id: req.params.post_id }, { $inc: {score: vote_value} }, {new: true}).exec();
     } catch (e) {
-        res.status(404).send('"error":"post doesn\'t exist"}');
+        res.status(404).send({"error":"post doesn\'t exist"});
         return;
     }
     
