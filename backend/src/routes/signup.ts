@@ -10,6 +10,7 @@ import { get_user } from "../util/cache.js";
 const create:Route = ['/signup', 'POST', 'none', async (req: Request, res: Response) => {
     
     if (!req.cookies.auth) {
+        console
         if (!req.body.username || !req.body.password) {
             res.status(422).send({error:"Missing required fields"});
             return;
@@ -65,12 +66,15 @@ const create:Route = ['/signup', 'POST', 'none', async (req: Request, res: Respo
 
     delete global.userCreation[req.params.id];
 
+    
     const a = new global.models.User({
         user_id: sanitize(req.body.username),
         google_id: user?.google_id, 
         email: sanitize(req.body.email || user.email || ''),
         password: req.body.password ? bcrypt.hashSync(req.body.password, 12) : undefined
     });
+    
+    
 
     t = validate(req.body, 'description', false, 0, 150);
     if (t) {

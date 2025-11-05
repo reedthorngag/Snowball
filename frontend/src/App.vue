@@ -35,7 +35,8 @@ export default {
             error: this.error,
             showError: false,
             showSignup: this.showSignup,
-            lastError: 0
+            lastError: 0,
+            googleLoginEnabled: this.googleLoginEnabled
         };
     },
     methods: {
@@ -49,21 +50,32 @@ export default {
             localStorage.setItem("data-theme", prefersDark ? "dark" : "light");
         }
 
-        let req = await axios.get('/api/v1/user');
-        if (req.status == 200) {
+        if (this.$route.query.error) {
+            // @ts-ignore
+            this.error = this.$route.query.error;
+        }
+
+        let res = await axios.get('/api/v1/user');
+        if (res.status == 200) {
             // @ts-ignore
             this.loggedIn = true;
-            this.currUser = req.data;
+            this.currUser = res.data;
             console.log('User is logged in!');
             return;
         }
 
-        req = await axios.get('/api/v1/auth/valid');
-        if (req.status == 200) {
+        res = await axios.get('/api/v1/auth/valid');
+        if (res.status == 200) {
             console.log('User has pending account creation');
             // @ts-ignore
             this.showSignup = true;
+            return;
         }
+
+        res = await axios.get('/auth/google/enabled');
+        if (res.status == 200)
+            // @ts-ignore
+            this.googleLoginEnabled = true;
 
         document.cookie = 'auth=; max-age=-1; path=/;';
         console.log('User isn\'t logged in!');

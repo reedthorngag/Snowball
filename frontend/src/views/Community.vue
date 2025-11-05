@@ -1,13 +1,60 @@
 <script setup lang="ts">
 import '../assets/postStyles.css';
 import Feed from '@/components/Feed.vue';
+import { getCurrentInstance, onMounted } from 'vue'
+
+const appContext = getCurrentInstance()?.appContext!;
+const globals = appContext.config.globalProperties;
+
+const props = defineProps({community_id: String});
+
+const currUser = globals.currUser   // already a ref
+const error = globals.error
+
+const community = reactive({
+  member_count: 0,
+  owner: '',
+  birthtime: 0,
+  description: ''
+})
+
+const editing = ref(false)
+const editText = ref('')
+const isOwner = ref(false)
+const description = ref('')
+const joined = ref(false)
+
+async function init() {
+    const res = await axios.get('/api/v1/communities/'+encodeURIComponent(props.community_id!));
+    if (res.status != 200) {
+        error.value = res.data;
+        return;
+    }
+    Object.assign(community, res.data);
+    description.value = res.data.description;
+
+    setTimeout(() => {
+
+        if (community.owner == {...currUser.value}?.user_id) {
+            isOwner.value = true;
+        }
+
+        joined.value = {...currUser.value}?.communities?.includes(props.community_id) ?? false;
+    }, 500);
+}
+
+watch(() => props.community_id, (newVal, oldVal) => {
+    init();
+});
+
+onMounted(() => init());
 
 </script>
 
 <template>
     <div class="content-container" style="margin-bottom: 2vh;">
         <div class="body" style="position: relative;">
-            <button v-if="isOwner && currUser" class="button join-btn" @click="toggleJoinCommunity()">{{ joined ? 'leave' : 'join' }}</button>
+            <button v-if="!isOwner && currUser" class="button join-btn" @click="toggleJoinCommunity()">{{ joined ? 'leave' : 'join' }}</button>
             <div class="name">{{ community_id }}</div>
             <div v-if="community.description || isOwner" style="margin-bottom: 1vh; width: 80%;">
                 <div v-if="isOwner" class="edit-actions" style="margin-bottom: 0.5vh;">
@@ -33,19 +80,17 @@ import Feed from '@/components/Feed.vue';
         </div>
     </div>
     <div class="info">
-        <Button class="button" @click="$router.push('/communities/'+encodeURIComponent(community_id)+'/posts/create')">Create post</Button>
+        <Button class="button" @click="$router.push('/communities/'+encodeURIComponent(props.community_id!)+'/posts/create')">Create post</Button>
     </div>
     <Feed :community_id="community_id" :key="community_id" />
 </template>
 
 <script lang="ts">
 import axios from 'axios';
+import { reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 
 export default {
-    props: [
-        'community_id'
-    ],
     data() {
         return {
             community: {
@@ -70,7 +115,7 @@ export default {
 
         async toggleJoinCommunity() {
 
-            const res = await axios.put(`/api/v1/communities/${this.community_id}/${this.joined ? 'leave' : 'join'}`);
+            const res = await axios.put(`/api/v1/communities/${props.community_id}/${this.joined ? 'leave' : 'join'}`);
             if (res.status != 200) {
                 this.error = res.data || String(res.status);
                 return;
@@ -91,7 +136,7 @@ export default {
             }
                 
 
-            const res = await axios.put(`/api/v1/communities/${encodeURIComponent(this.community_id)}`,
+            const res = await axios.put(`/api/v1/communities/${encodeURIComponent(props.community_id!)}`,
                 {
                     description: this.community.description
                 });
@@ -130,27 +175,6 @@ export default {
             return 'Unknown time';
         }
     },
-
-    async mounted() {
-        const community = await axios.get('/api/v1/communities/'+encodeURIComponent(this.community_id));
-        if (community.status != 200) {
-            this.error = community.data;
-            return;
-        }
-        this.community = community.data;
-        this.description = community.data.description;
-
-        setTimeout(() => {
-            // @ts-ignore
-            if (this.community.owner == this.currUser!.user_id)
-                this.isOwner = true;
-
-            // @ts-ignore
-            this.joined = this.currUser?.communities?.includes(this.community_id) ?? false;
-            // @ts-ignore
-            console.log(this.currUser?.communities);
-        }, 500);
-    }
 }
 
 </script>

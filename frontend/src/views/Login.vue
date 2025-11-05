@@ -11,8 +11,8 @@ import { ref } from 'vue';
 
             <div class="container" @click="e => e.stopPropagation()">
                 <div class="title">Login</div>
-                <GoogleLogin style="margin: 1vh 0;" />
-                <hr style="border-top: var(--border-width) solid var(--text-light); width: 80%; margin: 1vh 0;"></hr>
+                <GoogleLogin v-if="googleLoginEnabled" style="margin: 1vh 0;" />
+                <hr v-if="googleLoginEnabled" style="border-top: var(--border-width) solid var(--text-light); width: 80%; margin: 1vh 0;"></hr>
                 <form @submit.prevent="login()">
                     <input type="username" id="username" v-model="username" placeholder="Username or email" required>
                     <input type="password" id="password" v-model="password" placeholder="password" required>
@@ -37,7 +37,8 @@ export default {
             error: this.error,
             username: '',
             password: '',
-            loggedIn: this.loggedIn
+            loggedIn: this.loggedIn,
+            googleLoginEnabled: this.googleLoginEnabled
         }
     },
     emits: ['error', 'close', 'showSignup'],

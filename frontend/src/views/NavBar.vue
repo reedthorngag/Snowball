@@ -10,10 +10,10 @@ import lightIcon from '@/assets/light-icon.png'
 
 <template>
     <header>
-        <div class="left">
+        <RouterLink to="/" class="left" style="text-decoration: none;">
             <img class="logo-img" :src="logo">
             <div class="logo"> Snowball</div>
-        </div>
+        </RouterLink>
         <div class="center">
             <input type="text" class="search" placeholder="Search..." />
         </div>

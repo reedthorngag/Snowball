@@ -111,7 +111,7 @@ export default {
             this.editing = false;
             this.comment.body = res.data.body;
             this.comment.edited = true;
-            this.comment.edited_at = res.data.edited_at;
+            this.comment.edited_at = res.data.last_edit;
         },
 
         async upvote() {
@@ -234,7 +234,6 @@ export default {
     display: block;
     flex: 1;
     color: var(--text);
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
 }
 
 .comment-header {

@@ -18,6 +18,7 @@ app.config.globalProperties.currUser = ref(null);
 app.config.globalProperties.error = ref(null);
 app.config.globalProperties.showLogin = ref(false);
 app.config.globalProperties.showSignup = ref(false);
+app.config.globalProperties.googleLoginEnabled = ref(false);
 
 app.use(router)
 

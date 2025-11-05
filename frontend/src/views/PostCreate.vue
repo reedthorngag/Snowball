@@ -12,7 +12,7 @@ import '../assets/postStyles.css';
             <input id="community" type="text" v-model="community" placeholder="Search communities..." @focus="showDropdown = true" @focusout="closeCommunityList()" @input="searchCommunities()"/>
             
             <ul v-if="showDropdown" class="dropdown">
-                <li v-for="c in communities" @click="community = (c as any).community_id">{{ (c as any).community_id }}</li>
+                <li v-for="c in communities" :key="(c as any).community_id" @click="community = (c as any).community_id">{{ (c as any).community_id }}</li>
                 <li v-if="communities.length === 0" class="no-result">No results found</li>
             </ul>
         </div>
@@ -173,7 +173,7 @@ export default {
                 return;
             }
         }, 500);
-        if (window.location.pathname == '/posts/create')
+        if (window.location.pathname != '/posts/create')
             return;
         
         const post = await axios.get('/api/v1/posts/'+encodeURIComponent(this.$route.path.substring(this.$route.path.lastIndexOf('/'))));

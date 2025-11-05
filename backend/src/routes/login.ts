@@ -23,7 +23,7 @@ const login:Route = ['/login', 'POST', 'none', async (req: Request, res: Respons
         return;
     }
 
-    const user = await global.models.User.find({$or: [{ user_id: req.body.username }, { email: req.body.username }]}).exec();
+    const user = await global.models.User.findOne({$or: [{ user_id: req.body.username }, { email: req.body.username }]}).exec();
 
     if (!user) {
         res.status(401).send({error: "Incorrect username or password"});

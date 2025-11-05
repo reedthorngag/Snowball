@@ -36,7 +36,7 @@ const create:Route = ['/posts/:post_id/comments/:comment_id', 'PUT', 'required',
     comment.edited = true;
     comment.last_edit = Date.now();
 
-    res.send(JSON.stringify(await comment.save()));
+    res.send(await comment.save());
 }];
 
 

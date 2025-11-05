@@ -7,7 +7,7 @@ import Feed from '@/components/Feed.vue';
 <template>
     <div class="content-container" style="margin-bottom: 2vh;">
         <div class="body">
-            <div class="name">{{ user_id }}</div>
+            <div class="name">{{ user_id ?? user.user_id }}</div>
             <div v-if="user.description || isOwner" style="margin-bottom: 1vh; width: 80%;">
                 <div v-if="isOwner" class="edit-actions" style="margin-bottom: 0.5vh;">
                     <button v-if="editing" class="save-btn" @click="saveEdit">Save</button>
@@ -28,9 +28,9 @@ import Feed from '@/components/Feed.vue';
         </div>
     </div>
     <div class="info">
-        <Button class="button" @click="$router.push('/users/'+encodeURIComponent(user_id)+'/posts/create')">Create post</Button>
+        <Button class="button" @click="$router.push('/posts/create')">Create post</Button>
     </div>
-    <Feed :user_id="user_id" :key="user_id" />
+    <Feed v-if="user_id ?? user.user_id" :user_id="user_id ?? user.user_id" :key="user_id" />
 </template>
 
 <script lang="ts">
@@ -65,7 +65,7 @@ export default {
             }
                 
 
-            const res = await axios.put(`/api/v1/users/${encodeURIComponent(this.user_id)}`,
+            const res = await axios.put(`/api/v1/user`,
                 {
                     description: this.user.description
                 });
@@ -106,13 +106,27 @@ export default {
     },
 
     async mounted() {
-        if (!this.user_id) {
-            
-        }
+        setTimeout(() => {
+            if (!this.user_id) {
+                if (!this.currUser) {
+                    this.$router.push('/');
+                    return;
+                }
+                // @ts-ignore
+                this.user = this.currUser;
+                // @ts-ignore
+                this.description = this.currUser?.description ?? '';
+            }
+        }, 500);
 
         const user = await axios.get('/api/v1/users/'+encodeURIComponent(this.user_id));
         if (user.status != 200) {
-            this.error = user.data;
+            setTimeout(() => {
+                if (this.user)
+                    return;
+                this.error = user.data;
+                return;
+            }, 500);
             return;
         }
         this.user = user.data;

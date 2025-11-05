@@ -33,9 +33,9 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/posts/create',
-      name: 'Create post',
-      component: PostCreate
+      path: '/profile',
+      name: 'Profile',
+      component: User
     },
     {
       path: '/communities/:community_id/posts/create',
@@ -47,6 +47,11 @@ const router = createRouter({
       path: '/communities/create',
       name: 'Create community',
       component: CommunityCreate
+    },
+    {
+      path: '/posts/create',
+      name: 'Create post',
+      component: PostCreate
     },
     {
       path: '/login',

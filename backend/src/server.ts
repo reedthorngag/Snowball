@@ -50,6 +50,8 @@ app.use('/resources', express.static(path.resolve('/app/file-store'), {etag: tru
 app.use(express.static(path.resolve('/app/frontend/dist'),{ extensions: ['html'], redirect: false, etag: true }));
 
 
-initGoogleOauth2(app);
+// disable google oauth if credentials don't exist
+if (process.env.CLIENT_ID)
+    initGoogleOauth2(app);
 
 export default app;

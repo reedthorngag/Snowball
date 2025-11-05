@@ -10,6 +10,8 @@ const GoogleStrategy = Google.Strategy;
 
 function initGoogleOauth2(app:Express) {
 
+    app.get('/auth/google/enabled', (req:Request, res:Response) => res.status(200).send());
+
 
     // Configure the Google OAuth2 strategy
     passport.use(new GoogleStrategy({
@@ -30,6 +32,7 @@ function initGoogleOauth2(app:Express) {
 
             global.userCreation[id] = { google_id: profile.id, email: profile.email, time: Date.now() };
 
+            console.log('hi')
             profile['noUserID'] = true;
             profile['tmpID'] = id;
             return done(null, profile);
