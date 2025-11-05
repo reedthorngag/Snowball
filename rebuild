@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-sudo docker compose down
-sudo docker volume rm reddit-clone_db-data
-sudo docker volume rm reddit-clone_file-store
+docker compose down
+docker volume rm reddit-clone_db-data
+docker volume rm reddit-clone_file-store
 
-sudo docker compose build --no-cache && sudo docker compose up
+docker compose build --no-cache && docker compose up

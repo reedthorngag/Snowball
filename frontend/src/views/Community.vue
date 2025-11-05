@@ -80,7 +80,7 @@ onMounted(() => init());
         </div>
     </div>
     <div class="info">
-        <Button class="button" @click="$router.push('/communities/'+encodeURIComponent(props.community_id!)+'/posts/create')">Create post</Button>
+        <Button class="button" @click="$router.push('/posts/create')">Create post</Button>
     </div>
     <Feed :community_id="community_id" :key="community_id" />
 </template>
