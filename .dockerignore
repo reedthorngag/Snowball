@@ -18,6 +18,8 @@
 
 !backend/package.json
 !backend/tsconfig.json
+!backend/privatekey.key
+!backend/certificate.crt
 
 !backend/mongo-entrypoint/create_user.js
 !backend/mongo-entrypoint/test.sh
