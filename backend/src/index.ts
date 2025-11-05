@@ -53,13 +53,13 @@ if (process.env.ENV === 'PROD') {
         key: privateKey,
         cert: certificate
     }, app).listen(port,()=>{
-        Logger.info(`Listening on port ${port}`);
+        Logger.info(`Listening on port ${port} - https`);
         http.createServer(local_app).listen(80);
     });
     
 } else {
     http.createServer(app).listen(port,()=>{
-        Logger.info("Listening on port "+port);
+        Logger.info("Listening on port "+port+' - http');
         http.createServer(local_app).listen(80);
     });
 }

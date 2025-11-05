@@ -51,7 +51,7 @@ app.use(express.static(path.resolve('/app/frontend/dist'),{ extensions: ['html']
 
 
 // disable google oauth if credentials don't exist
-if (process.env.CLIENT_ID)
+if (process.env.CLIENT_ID && process.env.CLIENT_ID.length)
     initGoogleOauth2(app);
 
 export default app;

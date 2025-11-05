@@ -17,8 +17,6 @@ WORKDIR /app
 COPY ./package.json .
 RUN npm install --include=dev
 
-COPY ./backend/mongo-entrypoint/* /docker-entrypoint-initdb.d/
-
 COPY . .
 
 # ENV NODE_PATH ./build

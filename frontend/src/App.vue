@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import Navbar from './views/Navbar.vue';
-import Sidebar from './views/Sidebar.vue';
+import Navbar from '@/views/Navbar_.vue';
+import Sidebar from '@/views/Sidebar.vue';
 import axios from 'axios';
-import Error from './components/Error.vue';
+import Error from '@/components/Error.vue';
 
 </script>
 
